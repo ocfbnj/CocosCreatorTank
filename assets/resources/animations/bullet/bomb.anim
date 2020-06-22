@@ -1,0 +1,43 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "bomb",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.11666666666666667,
+  "sample": 60,
+  "speed": 0.5,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "f4f96222-6b95-463d-a1cd-c6ded8a6e731"
+            }
+          },
+          {
+            "frame": 0.05,
+            "value": {
+              "__uuid__": "e68ec425-5ca1-4f35-9e87-c567d59634e2"
+            }
+          },
+          {
+            "frame": 0.1,
+            "value": {
+              "__uuid__": "96c1bd1e-9819-4293-b71e-7e4e511607f2"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": [
+    {
+      "frame": 0.11666666666666667,
+      "func": "onBulletDestory",
+      "params": []
+    }
+  ]
+}
