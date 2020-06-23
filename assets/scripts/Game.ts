@@ -20,8 +20,8 @@ export default class Game extends cc.Component {
     @property(cc.Integer)
     level: number = 1;
 
-    @property(cc.Label)
-    stageLabel: cc.Label = null;
+    @property(cc.Node)
+    stageArea: cc.Node = null;
 
     enableAudio: boolean;
     playerMoveID: number;
@@ -73,11 +73,11 @@ export default class Game extends cc.Component {
     }
 
     showStage() {
-        this.stageLabel.node.active = true;
-        this.stageLabel.string = `Stage ${this.level}`;
+        this.stageArea.active = true;
+        this.stageArea.getChildByName("level").getComponent(cc.Label).string = `Stage ${this.level}`;
 
         this.scheduleOnce(() => {
-            this.stageLabel.node.destroy();
+            this.stageArea.destroy();
 
             // 开启图层
             this.node.getChildByName("MapLayer").active = true;
