@@ -1,7 +1,8 @@
 import BaseTank from "./BaseTank";
-import { Dir } from "./Globals";
+import { Dir, Globals } from "./Globals";
 import MapLayer from "./MapLayer";
 import UpdateInformations from "./UpdateInformations";
+import Game from "./Game";
 
 const { ccclass, property } = cc._decorator;
 
@@ -25,14 +26,21 @@ export default class PlayerTank extends BaseTank {
     }
 
     start() {
-        this.getComponent(cc.Animation).play("star");
-        this.blood = 2;
-        cc.find("/Game/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood);
+        this.init();
     }
 
+    init() {
+        this.node.active = true;
+        this.getComponent(cc.Animation).play("star");
+        this.blood = 1;
+        cc.find("/Game/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
+    }
+
+    // 播放完star动画后调用
     afterStart() {
-        this.canMove = true;
         this.setDir(Dir.UP);
+        this.node.setPosition(80, 8);
+        this.canMove = true;
         this.node.getChildByName("ring").getComponent("Ring").play();
     }
 
@@ -70,6 +78,7 @@ export default class PlayerTank extends BaseTank {
     control(dir: Dir) {
         if (!this.autoMoving)
             this.node.parent.getComponent(MapLayer).game.playAudio("player_move", true);
+
         this.setDir(dir);
         this.playAnimation();
         this.autoMoving = true;
@@ -128,17 +137,59 @@ export default class PlayerTank extends BaseTank {
     }
 
     shoot() {
+        if (!this.canMove)
+            return;
+
         this.node.parent.getComponent(MapLayer).createBullet(this.dir, this.node.position, this.step * 2, this);
     }
 
     disBlood() {
+        if (this.isInvincible)
+            return;
+
         cc.log("player disBlood");
 
-        if (this.blood > 0)
-            this.blood--;
+        this.blood--;
 
-        // 更新信息区域
-        cc.find("/Game/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood);
+        if (this.blood >= 0) {
+            // 播放死亡动画
+            this.canMove = false;
+            this.node.parent.getComponent(MapLayer).game.playAudio("tank_bomb", false);
+            this.stopAnimation();
+            this.getComponent(cc.Animation).play("blast");
+        }
+
+        if (this.blood != 0) {
+            // 回到初始位置，不播放星星动画
+            this.afterStart();
+
+        } else {
+            // 让坦克消失
+            this.node.active = false;
+            // 播放小的game over动画
+            this.gameOver();
+        }
+
+        if (this.blood > 0)
+            // 更新剩余生命值
+            cc.find("/Game/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
+    }
+
+    gameOver() {
+        this.node.parent.getComponent(MapLayer).game.stopAudio("player_move");
+        let visableSize = cc.view.getVisibleSize();
+        let gameOverNode = cc.find("/Game/gameover");
+        gameOverNode.active = true;
+        gameOverNode.setPosition(-visableSize.width / 2 - gameOverNode.width / 2, -94);
+
+        // 播放右移动画
+        cc.tween(gameOverNode)
+            .to(1.5, { position: cc.v2(-35, -94) })
+            .call(() => {
+                // 播放上升动画
+                cc.find("/Game").getComponent(Game).gameOverUp();
+            })
+            .start();
     }
 
     _autoMoving(realStep) {

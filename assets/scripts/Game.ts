@@ -16,6 +16,15 @@ export default class Game extends cc.Component {
     @property({ type: cc.AudioClip })
     tankBombAudio: cc.AudioClip = null;
 
+    @property({ type: cc.AudioClip })
+    campBombAudio: cc.AudioClip = null;
+
+    @property({ type: cc.AudioClip })
+    gameOverAudio: cc.AudioClip = null;
+
+    @property({ type: cc.AudioClip })
+    gameStartAudio: cc.AudioClip = null;
+
     @property(cc.Prefab)
     black: cc.Prefab = null;
 
@@ -31,13 +40,32 @@ export default class Game extends cc.Component {
     onLoad() {
         this.enableAudio = true;
 
-        this.showAnimation();
+        this.init();
 
+        // 控制触摸按钮
         if (cc.sys.isMobile) {
             this.node.getChildByName("TouchControl").active = true;
+        } else {
+            this.node.getChildByName("TouchControl").active = false;
         }
     }
 
+    init() {
+        // 播放开始游戏音效
+        this.playAudio("game_start");
+
+        for (const node of this.node.children) {
+            if (node.name == "Main Camera") {
+                node.getComponent(cc.Camera).backgroundColor = new cc.Color(100, 100, 100);
+            } else {
+                node.active = false;
+            }
+        }
+
+        this.showAnimation();
+    }
+
+    // 转场动画
     showAnimation() {
         let visableSize = cc.view.getVisibleSize();
 
@@ -100,6 +128,12 @@ export default class Game extends cc.Component {
             cc.audioEngine.setVolume(this.playerMoveID, 0.8);
         } else if (name == "tank_bomb") {
             cc.audioEngine.playEffect(this.tankBombAudio, loop);
+        } else if (name == "game_over") {
+            cc.audioEngine.playEffect(this.gameOverAudio, loop);
+        } else if (name == "game_start") {
+            cc.audioEngine.playEffect(this.gameStartAudio, loop);
+        } else if (name == "camp_bomb") {
+            cc.audioEngine.playEffect(this.campBombAudio, loop);
         }
     }
 
@@ -109,5 +143,37 @@ export default class Game extends cc.Component {
         if (name == "player_move") {
             cc.audioEngine.stop(this.playerMoveID);
         }
+    }
+
+    gameOverUp() {
+        let visableSize = cc.view.getVisibleSize();
+        let gameOverNode = cc.find("/Game/gameover_up");
+        gameOverNode.active = true;
+        gameOverNode.setPosition(0, -visableSize.height / 2 - gameOverNode.height / 2);
+
+        cc.tween(gameOverNode)
+            .to(1.5, { position: cc.v2(0, 0) })
+            .delay(0.5)
+            .call(() => {
+                // 切换到Game Over
+                // 关闭所有节点
+                for (const node of this.node.children) {
+                    if (node.name == "Main Camera")
+                        // 设置背景色为黑色
+                        this.node.getChildByName("Main Camera").getComponent(cc.Camera).backgroundColor = new cc.Color(0, 0, 0);
+                    else
+                        node.active = false;
+                }
+
+                // 播放失败音效
+                this.playAudio("game_over");
+                this.node.getChildByName("big-gameover").active = true;
+
+                // 2秒后回到主界面 TODO
+                this.scheduleOnce(() => {
+
+                });
+            })
+            .start();
     }
 }
