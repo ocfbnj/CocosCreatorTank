@@ -1,0 +1,17 @@
+{
+  "package": "",
+  "name": "",
+  "icon": "",
+  "versionName": "",
+  "versionCode": "",
+  "minPlatformVersion": "",
+  "deviceOrientation": "portrait",
+  "logLevel": "log",
+  "npmPath": "",
+  "tinyPackageMode": false,
+  "tinyPackageServer": "",
+  "useDebugKey": true,
+  "privatePath": "",
+  "certificatePath": "",
+  "disabledMode": "disabled is-disabled"
+}
