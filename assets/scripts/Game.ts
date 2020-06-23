@@ -29,7 +29,7 @@ export default class Game extends cc.Component {
     playerMoveID: number;
 
     onLoad() {
-        this.enableAudio = false;
+        this.enableAudio = true;
 
         this.showAnimation();
 
