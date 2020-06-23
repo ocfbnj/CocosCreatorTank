@@ -19,11 +19,10 @@ export default class EnemyTank extends BaseTank {
         if (!this.autoMoving) return;
 
         let realStep = (this.step + 35) * dt;
-        // this._autoMoving(realStep);
+        this._autoMoving(realStep);
     }
 
     init(pos: cc.Vec3) {
-        // this.autoMoving = true;
         this.curDistance = 0;
         this.level = Math.ceil(Math.random() * 4);
 
@@ -38,12 +37,12 @@ export default class EnemyTank extends BaseTank {
         this.getComponent(cc.Animation).play("star");
 
         // 控制方向
-        // this.schedule(() => {
-        //     if (this.curDistance >= this.maxDistance) {
-        //         this.curDistance = 0;
-        //         this.changeDir();
-        //     }
-        // }, 0.1);
+        this.schedule(() => {
+            if (this.curDistance >= this.maxDistance) {
+                this.curDistance = 0;
+                this.changeDir();
+            }
+        }, 0.1);
 
         // 控制发射子弹
         this.schedule(() => {

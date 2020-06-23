@@ -11,6 +11,7 @@ export const Globals = {
     MAP_HEIGHT: 208,
     MAP_WIDTH: 208,
     BULLET_SIZE: 4,
+    ENEMIES_COUNT: 20,
 
     ENEMY1: cc.v2(8, 200),
     ENEMY2: cc.v2(104, 200),

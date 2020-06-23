@@ -1,20 +1,28 @@
+import { Globals } from "./Globals";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class UpdateInformations extends cc.Component {
     @property(cc.Prefab)
     enemyIcon: cc.Prefab = null;
 
     enemyIcons: cc.Node[] = [];
 
-    onLoad() {
+    init() {
+        for (const node of this.enemyIcons) {
+            node.destroy();
+        }
+
+        this.enemyIcons = [];
+
         let x = -4;
         let y = 80;
 
         for (let i = 0; i != 10; i++) {
             for (let j = 0; j != 2; j++) {
                 let node = cc.instantiate(this.enemyIcon);
+                node.name = "icon";
                 node.parent = this.node;
 
                 node.x = x + j * 8;

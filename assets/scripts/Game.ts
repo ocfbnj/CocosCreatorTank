@@ -1,4 +1,5 @@
 import UpdateInformations from "./UpdateInformations";
+import TouchControl from "./TouchControl";
 
 const { ccclass, property } = cc._decorator;
 
@@ -41,13 +42,6 @@ export default class Game extends cc.Component {
         this.enableAudio = true;
 
         this.init();
-
-        // 控制触摸按钮
-        if (cc.sys.isMobile) {
-            this.node.getChildByName("TouchControl").active = true;
-        } else {
-            this.node.getChildByName("TouchControl").active = false;
-        }
     }
 
     init() {
@@ -107,12 +101,27 @@ export default class Game extends cc.Component {
         this.stageArea.getChildByName("level").getComponent(cc.Label).string = this.level.toString();
 
         this.scheduleOnce(() => {
-            this.stageArea.destroy();
+            this.stageArea.active = false;
 
             // 开启图层
-            this.node.getChildByName("Informations").active = true;
-            cc.find("/Game/Informations").getComponent(UpdateInformations).updateCurrentLevel(this.level);
-            this.node.getChildByName("MapLayer").active = true;
+            let informations = this.node.getChildByName("Informations").getComponent(UpdateInformations);
+            informations.node.active = true;
+            informations.init();
+            informations.updateCurrentLevel(this.level);
+
+            // 加载地图
+            let mapLayer = this.node.getChildByName("MapLayer").getComponent("MapLayer");
+            mapLayer.node.active = true;
+            mapLayer.init();
+
+            // 触摸区域
+            let touchControl = this.node.getChildByName("TouchControl").getComponent(TouchControl);
+            if (!cc.sys.isMobile) {
+                touchControl.node.active = true;
+                touchControl.init();
+            } else {
+                touchControl.node.active = false;
+            }
         }, 1);
     }
 

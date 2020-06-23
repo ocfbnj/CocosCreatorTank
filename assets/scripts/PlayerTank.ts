@@ -14,25 +14,20 @@ export default class PlayerTank extends BaseTank {
         super();
         this.isEnemy = false;
         this.isInvincible = false;
-
-        // TODO
-        this.bulletCount = 2;
     }
 
     onLoad() {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+        this.blood = 3;
 
-    }
-
-    start() {
-        this.init();
+        // TODO
+        this.bulletCount = 2;
     }
 
     init() {
         this.node.active = true;
         this.getComponent(cc.Animation).play("star");
-        this.blood = 1;
         cc.find("/Game/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
     }
 
@@ -76,6 +71,8 @@ export default class PlayerTank extends BaseTank {
     }
 
     control(dir: Dir) {
+        if (!this.canMove) return;
+
         if (!this.autoMoving)
             this.node.parent.getComponent(MapLayer).game.playAudio("player_move", true);
 
@@ -85,6 +82,8 @@ export default class PlayerTank extends BaseTank {
     }
 
     controlStop() {
+        if (!this.canMove) return;
+
         this.autoMoving = false;
         this.node.parent.getComponent(MapLayer).game.stopAudio("player_move");
         this.stopAnimation();
