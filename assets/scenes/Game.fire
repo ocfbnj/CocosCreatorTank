@@ -681,12 +681,12 @@
     "tankBombAudio": {
       "__uuid__": "65bb95dd-5e37-4c4c-901d-7e2e55469441"
     },
-    "level": 34,
+    "level": 30,
     "_id": "a1Or8jdTVLaqdqGMZd86im"
   },
   {
     "__type__": "cc.Node",
-    "_name": "MoveButtons",
+    "_name": "TouchControl",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -705,7 +705,7 @@
         "__id__": 24
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 26

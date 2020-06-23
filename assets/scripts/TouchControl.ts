@@ -12,6 +12,12 @@ export default class TouchControl extends cc.Component {
     player: PlayerTank = null;
 
     onLoad() {
+        // 设置位置
+        let size = cc.view.getVisibleSize();
+
+        this.node.x = size.width * 0.05 + this.node.width * 0.5 - size.width * 0.5;
+        this.node.y = size.height * 0.1 + this.node.height * 0.5 - size.height * 0.5;
+
         this.node.parent.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this, true);
         this.node.parent.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this, true);
 

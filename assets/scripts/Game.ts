@@ -22,6 +22,10 @@ export default class Game extends cc.Component {
 
     onLoad() {
         this.enableAudio = true;
+
+        if (cc.sys.isMobile) {
+            this.node.getChildByName("TouchControl").active = true;
+        }
     }
 
     playAudio(name: string, loop = false) {
