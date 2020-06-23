@@ -116,7 +116,7 @@ export default class Game extends cc.Component {
 
             // 触摸区域
             let touchControl = this.node.getChildByName("TouchControl").getComponent(TouchControl);
-            if (!cc.sys.isMobile) {
+            if (cc.sys.isMobile) {
                 touchControl.node.active = true;
                 touchControl.init();
             } else {
