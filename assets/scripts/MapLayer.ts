@@ -45,31 +45,35 @@ export default class MapLayer extends cc.Component {
     enemies: cc.Node[];
     bulletPool: cc.NodePool;
     enemiesPool: cc.NodePool;
-    enemiesCount: number;
     remainEnemiesCount: number;
 
-    constructor() {
-        super();
-
+    init() {
+        // 清理子节点
+        for (const node of this.node.children) {
+            if (node.name == "player") {
+                node.getComponent(PlayerTank).init();
+            } else if (node.name == "camp") {
+                // 什么都不做
+            } else {
+                node.destroy();
+            }
+        }
         // 所有障碍方块
-        this.blocks = new Array();
+        this.blocks = [];
         // 敌人子弹
-        this.enemiesBullets = new Array();
+        this.enemiesBullets = [];
         // 玩家子弹
-        this.playerBullets = new Array();
+        this.playerBullets = [];
         // 敌人坦克
-        this.enemies = new Array();
+        this.enemies = [];
 
         // 子弹节点池
         this.bulletPool = new cc.NodePool();
         // 敌人节点池
         this.enemiesPool = new cc.NodePool();
 
-        this.enemiesCount = 20;
-        this.remainEnemiesCount = 20;
-    }
+        this.remainEnemiesCount = Globals.ENEMIES_COUNT;
 
-    onLoad() {
         // 加载地图
         this._loadMap();
 
@@ -77,6 +81,15 @@ export default class MapLayer extends cc.Component {
 
         // 开启计时器自动生成敌人
         this.schedule(this.spawnNewEnemy, 4.5);
+
+        // 检查游戏是否胜利
+        this.schedule(() => {
+            if (this.enemies.length == 0 && this.remainEnemiesCount == 0) {
+                this.unscheduleAllCallbacks();
+                // 两秒后跳转到下一关
+                this.scheduleOnce(this.toNextStage, 2);
+            }
+        }, 0.1);
     }
 
     createBullet(dir: Dir, pos: cc.Vec3, step: number, tank: BaseTank) {
@@ -115,7 +128,10 @@ export default class MapLayer extends cc.Component {
         if (this.enemies.length >= 6)
             return;
 
-        if (this.remainEnemiesCount == this.enemiesCount) {
+        if (this.remainEnemiesCount <= 0)
+            return;
+
+        if (this.remainEnemiesCount == Globals.ENEMIES_COUNT) {
             this.createEnemy(Globals.ENEMY1);
             this.createEnemy(Globals.ENEMY2);
             this.createEnemy(Globals.ENEMY3);
@@ -152,15 +168,23 @@ export default class MapLayer extends cc.Component {
         enemy.parent = this.node;
         enemy.getComponent(EnemyTank).init(pos);
 
-        this.remainEnemiesCount--;
         // 更新信息区域
         cc.find("/Game/Informations").getComponent(UpdateInformations).deleteOneIcon();
+
+        this.remainEnemiesCount--;
     }
 
 
     destoryEnemy(enemy: cc.Node) {
         this.enemies.splice(this.enemies.indexOf(enemy), 1);
-        this.enemiesPool.put(enemy)
+        this.enemiesPool.put(enemy);
+    }
+
+    toNextStage() {
+        let game = cc.find("Game").getComponent(Game);
+        game.level++;
+
+        game.init();
     }
 
     _loadMap() {

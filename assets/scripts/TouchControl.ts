@@ -11,7 +11,7 @@ export default class TouchControl extends cc.Component {
     @property(PlayerTank)
     player: PlayerTank = null;
 
-    onLoad() {
+    init() {
         // 设置位置
         let size = cc.view.getVisibleSize();
 
@@ -20,23 +20,23 @@ export default class TouchControl extends cc.Component {
 
         this.node.parent.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this, true);
         this.node.parent.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this, true);
-
-        for (const button of this.buttons) {
-            cc.log(button.position);
-        }
     }
 
     onTouchStart(event: cc.Event.EventTouch) {
-        let pos = this.node.convertToNodeSpaceAR(event.touch.getLocation());
+        let globalPos = this.node.parent.convertToNodeSpaceAR(event.touch.getLocation());
 
-        if (this.buttons[0].getBoundingBox().contains(pos)) {
-            this.player.control(Dir.LEFT);
-        } else if (this.buttons[1].getBoundingBox().contains(pos)) {
-            this.player.control(Dir.UP);
-        } else if (this.buttons[2].getBoundingBox().contains(pos)) {
-            this.player.control(Dir.RIGHT);
-        } else if (this.buttons[3].getBoundingBox().contains(pos)) {
-            this.player.control(Dir.DOWN);
+        if (this.node.getBoundingBox().contains(globalPos)) {
+            let pos = this.node.convertToNodeSpaceAR(event.touch.getLocation());
+
+            if (this.buttons[0].getBoundingBox().contains(pos)) {
+                this.player.control(Dir.LEFT);
+            } else if (this.buttons[1].getBoundingBox().contains(pos)) {
+                this.player.control(Dir.UP);
+            } else if (this.buttons[2].getBoundingBox().contains(pos)) {
+                this.player.control(Dir.RIGHT);
+            } else if (this.buttons[3].getBoundingBox().contains(pos)) {
+                this.player.control(Dir.DOWN);
+            }
         } else {
             this.player.shoot();
         }
