@@ -5,6 +5,7 @@ import Bullet from "./Bullet";
 import EnemyTank from "./EnemyTank";
 import BlockWall from "./BlockWall";
 import BaseTank from "./BaseTank";
+import UpdateInformations from "./UpdateInformations";
 
 const { ccclass, property } = cc._decorator;
 
@@ -152,6 +153,8 @@ export default class MapLayer extends cc.Component {
         enemy.getComponent(EnemyTank).init(pos);
 
         this.remainEnemiesCount--;
+        // 更新信息区域
+        cc.find("/Game/Informations").getComponent(UpdateInformations).deleteOneIcon();
     }
 
 

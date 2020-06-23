@@ -1,7 +1,7 @@
 import BaseTank from "./BaseTank";
 import { Dir } from "./Globals";
 import MapLayer from "./MapLayer";
-import Ring from "./Ring";
+import UpdateInformations from "./UpdateInformations";
 
 const { ccclass, property } = cc._decorator;
 
@@ -26,6 +26,8 @@ export default class PlayerTank extends BaseTank {
 
     start() {
         this.getComponent(cc.Animation).play("star");
+        this.blood = 2;
+        cc.find("/Game/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood);
     }
 
     afterStart() {
@@ -131,6 +133,12 @@ export default class PlayerTank extends BaseTank {
 
     disBlood() {
         cc.log("player disBlood");
+
+        if (this.blood > 0)
+            this.blood--;
+
+        // 更新信息区域
+        cc.find("/Game/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood);
     }
 
     _autoMoving(realStep) {

@@ -1,3 +1,5 @@
+import UpdateInformations from "./UpdateInformations";
+
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -74,12 +76,14 @@ export default class Game extends cc.Component {
 
     showStage() {
         this.stageArea.active = true;
-        this.stageArea.getChildByName("level").getComponent(cc.Label).string = `Stage ${this.level}`;
+        this.stageArea.getChildByName("level").getComponent(cc.Label).string = this.level.toString();
 
         this.scheduleOnce(() => {
             this.stageArea.destroy();
 
             // 开启图层
+            this.node.getChildByName("Informations").active = true;
+            cc.find("/Game/Informations").getComponent(UpdateInformations).updateCurrentLevel(this.level);
             this.node.getChildByName("MapLayer").active = true;
         }, 1);
     }
