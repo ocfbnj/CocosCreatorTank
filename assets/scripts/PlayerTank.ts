@@ -1,14 +1,18 @@
 import BaseTank from "./BaseTank";
 import { Dir } from "./Globals";
 import MapLayer from "./MapLayer";
+import Ring from "./Ring";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class PlayerTank extends BaseTank {
+    isInvincible: boolean;
+
     constructor() {
         super();
         this.isEnemy = false;
+        this.isInvincible = false;
 
         // TODO
         this.bulletCount = 2;
@@ -17,6 +21,7 @@ export default class PlayerTank extends BaseTank {
     onLoad() {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+
     }
 
     start() {
@@ -26,6 +31,7 @@ export default class PlayerTank extends BaseTank {
     afterStart() {
         this.canMove = true;
         this.setDir(Dir.UP);
+        this.node.getChildByName("ring").getComponent("Ring").play();
     }
 
     update(dt: number) {
