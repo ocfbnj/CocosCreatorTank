@@ -143,7 +143,7 @@ export default class Bullet extends cc.Component {
                     if (!this.isEnemy)
                         this.node.parent.getComponent(MapLayer).game.playAudio("bin", false);
                     count++;
-                } else if (block.name == "block_camp") {
+                } else if (block.name == "camp") {
                     block.getComponent(BlockCamp).tryDestory();
                     count++;
                 }
