@@ -9,7 +9,8 @@
     ]
   ],
   "excluded-modules": [
-    "3D Physics/Builtin"
+    "3D Physics/Builtin",
+    "SafeArea"
   ],
   "last-module-event-record-time": 1592716472054,
   "design-resolution-width": 960,
@@ -34,5 +35,7 @@
       "enable": false
     }
   },
-  "migrate-history": []
+  "migrate-history": [
+    "cloud-function"
+  ]
 }
