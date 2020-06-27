@@ -4,56 +4,28 @@ import MapLayer from "./MapLayer";
 import EnemyTank from "./EnemyTank";
 import BlockWall from "./BlockWall";
 import BlockCamp from "./BlockCamp";
+import Game from "./Game";
+import PlayerTank from "./PlayerTank";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Bullet extends cc.Component {
     @property([cc.SpriteFrame])
-    frames: cc.SpriteFrame[] = [];
+    private frames: cc.SpriteFrame[] = [];
 
-    tank: BaseTank;
-    isEnemy: boolean;
-    dir: number;
-    step: number;
-    stopMoving: boolean;
+    public tank: BaseTank;
+    public isEnemy: boolean;
+    private dir: number;
+    private step: number;
+    private stopMoving: boolean;
+    private mapLayer: MapLayer;
 
-    update(dt: number) {
-        if (this.stopMoving)
-            return;
-
-        let realStep = (this.step * 50) * dt;
-
-        switch (this.dir) {
-            case Dir.LEFT:
-                this.node.x -= realStep;
-                break;
-            case Dir.UP:
-                this.node.y += realStep;
-                break;
-            case Dir.RIGHT:
-                this.node.x += realStep;
-                break;
-            case Dir.DOWN:
-                this.node.y -= realStep;
-                break;
-            default:
-                break;
-        }
-
-        if (this._isCollisionWithMap() || this._isCollisionWithBlock() ||
-            this._isCollisionWithTank()) {
-            this.stopMoving = true;
-            this.playAnimation();
-        } else if (this._isCollisionWithBullet()) {
-            this.onBulletDestory();
-        }
-    }
-
-    init(dir: Dir, pos: cc.Vec3, step: number, tank: BaseTank) {
+    public init(dir: Dir, pos: cc.Vec3, step: number, tank: BaseTank) {
+        this.mapLayer = cc.find("/Canvas/MapLayer").getComponent(MapLayer);
         this.tank = tank;
         this.tank.bulletCount--;
-        this.isEnemy = tank.isEnemy;
+        this.isEnemy = tank instanceof EnemyTank;
         this.dir = dir;
         this.step = step;
         this.stopMoving = false;
@@ -80,35 +52,67 @@ export default class Bullet extends cc.Component {
         this.getComponent(cc.Sprite).spriteFrame = this.frames[this.dir];
     }
 
-    onBulletDestory() {
+    public onBulletDestory() {
         this.stopMoving = true;
         // TODO 删掉if
         if (this.tank)
             this.tank.bulletCount++;
-        this.node.parent.getComponent(MapLayer).destoryBullet(this.node, this.isEnemy);
+        this.mapLayer.destoryBullet(this.node, this.isEnemy);
     }
 
-    playAnimation() {
+    protected update(dt: number) {
+        if (this.stopMoving)
+            return;
+
+        let realStep = (this.step * 50) * dt;
+
+        switch (this.dir) {
+            case Dir.LEFT:
+                this.node.x -= realStep;
+                break;
+            case Dir.UP:
+                this.node.y += realStep;
+                break;
+            case Dir.RIGHT:
+                this.node.x += realStep;
+                break;
+            case Dir.DOWN:
+                this.node.y -= realStep;
+                break;
+            default:
+                break;
+        }
+
+        if (this._isCollisionWithMap() || this._isCollisionWithBlock() ||
+            this._isCollisionWithTank()) {
+            this.stopMoving = true;
+            this._playAnimation();
+        } else if (this._isCollisionWithBullet()) {
+            this.onBulletDestory();
+        }
+    }
+
+    private _playAnimation() {
         this.getComponent(cc.Animation).play("bomb");
     }
 
-    _isCollisionWithMap() {
+    private _isCollisionWithMap() {
         let node = this.node;
         let offset = Globals.BULLET_SIZE / 2;
 
         if (node.x - offset < 0 || node.x + offset > Globals.MAP_WIDTH ||
             node.y + offset > Globals.MAP_HEIGHT || node.y - offset < 0) {
             if (!this.isEnemy)
-                this.node.parent.getComponent(MapLayer).game.playAudio("bin", false);
+                this.mapLayer.game.getComponent(Game).playAudio("bin", false);
             return true;
         }
 
         return false;
     }
 
-    _isCollisionWithBlock() {
+    private _isCollisionWithBlock() {
         let count = 0;
-        let blocks = this.node.parent.getComponent(MapLayer).blocks;
+        let blocks: cc.Node[] = this.mapLayer.blocks.children;
         let box = this.node.getBoundingBox();
 
         // 加宽子弹
@@ -141,7 +145,7 @@ export default class Bullet extends cc.Component {
                     }
                 } else if (block.name == "block_stone") {
                     if (!this.isEnemy)
-                        this.node.parent.getComponent(MapLayer).game.playAudio("bin", false);
+                        this.mapLayer.game.getComponent(Game).playAudio("bin", false);
                     count++;
                 } else if (block.name == "camp") {
                     block.getComponent(BlockCamp).tryDestory();
@@ -153,17 +157,17 @@ export default class Bullet extends cc.Component {
         return count;
     }
 
-    _isCollisionWithTank() {
+    private _isCollisionWithTank() {
         let box = this.node.getBoundingBox();
         if (this.isEnemy) {
-            let player = this.node.parent.getComponent(MapLayer).player;
-            if (box.intersects(player.node.getBoundingBox())) {
-                player.disBlood();
+            let player = this.mapLayer.player;
+            if (box.intersects(player.getBoundingBox())) {
+                player.getComponent(PlayerTank).disBlood();
 
                 return true;
             }
         } else {
-            let enemies = this.node.parent.getComponent(MapLayer).enemies;
+            let enemies = this.mapLayer.enemies.children;
             for (let i = 0; i != enemies.length; i++) {
                 if (box.intersects(enemies[i].getBoundingBox())) {
                     enemies[i].getComponent(EnemyTank).disBlood();
@@ -176,13 +180,13 @@ export default class Bullet extends cc.Component {
         return false;
     }
 
-    _isCollisionWithBullet() {
+    private _isCollisionWithBullet() {
         let box = this.node.getBoundingBox();
         let bullets: cc.Node[];
 
         // 只检测玩家
         if (!this.isEnemy) {
-            bullets = this.node.parent.getComponent(MapLayer).enemiesBullets;
+            bullets = this.mapLayer.enemiesBullets.children;
 
             for (let i = 0; i != bullets.length; i++) {
                 if (box.intersects(bullets[i].getBoundingBox())) {

@@ -3,9 +3,9 @@
   "_name": "star",
   "_objFlags": 0,
   "_native": "",
-  "_duration": 0.13333333333333333,
-  "sample": 60,
-  "speed": 0.15,
+  "_duration": 0.8,
+  "sample": 10,
+  "speed": 1,
   "wrapMode": 1,
   "curveData": {
     "comps": {
@@ -18,19 +18,19 @@
             }
           },
           {
-            "frame": 0.03333333333333333,
+            "frame": 0.2,
             "value": {
               "__uuid__": "c8c70766-555c-4b09-8a8a-af2e2c44e125"
             }
           },
           {
-            "frame": 0.06666666666666667,
+            "frame": 0.4,
             "value": {
               "__uuid__": "2b7e2b14-7429-4fb2-8bf3-6be3385098f5"
             }
           },
           {
-            "frame": 0.1,
+            "frame": 0.6,
             "value": {
               "__uuid__": "3c335925-4787-4230-875a-c4187e020b6c"
             }
@@ -41,8 +41,8 @@
   },
   "events": [
     {
-      "frame": 0.13333333333333333,
-      "func": "afterStart",
+      "frame": 0.8,
+      "func": "afterStar",
       "params": []
     }
   ]
