@@ -18,7 +18,7 @@ export default class BaseTank extends cc.Component {
 
     public constructor() {
         super();
-        
+
         this.level = 0;
         this.dir = Dir.DOWN;
         this.step = 1;
@@ -47,7 +47,11 @@ export default class BaseTank extends cc.Component {
 
         for (let i = 0; i != blocks.length; i++) {
             let block = blocks[i];
-            if (rect.intersects(block.getBoundingBox())) {
+            if ((block.name == "block_wall" ||
+                block.name == "block_stone" ||
+                block.name == "camp" ||
+                block.name == "block_river") &&
+                rect.intersects(block.getBoundingBox())) {
                 return true;
             }
         }
