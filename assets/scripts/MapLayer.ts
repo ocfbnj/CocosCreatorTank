@@ -175,8 +175,8 @@ export default class MapLayer extends cc.Component {
     private _loadMap() {
         let self = this;
 
-        cc.loader.loadRes("maps/" + this.game.getComponent(Game).level, function (err, file) {
-            let data = file.text;
+        cc.resources.load("maps/" + this.game.getComponent(Game).level, cc.TextAsset, function (err, file) {
+            let data = (file as cc.TextAsset).text;
             let index = 0;
 
             for (let i = 0; i != 26; i++) {
@@ -203,6 +203,7 @@ export default class MapLayer extends cc.Component {
                             break;
                         case '4':
                             block = cc.instantiate(self.blockRiver);
+                            block.name = "block_river";
                             block.getComponent(cc.Animation).play("river");
                             break;
                         default:
@@ -242,9 +243,17 @@ export default class MapLayer extends cc.Component {
     }
 
     private _cleanChildNode() {
-        this.node.getChildByName("enemies").removeAllChildren(true);
-        this.playerBullets.removeAllChildren(true);
-        this.enemiesBullets.removeAllChildren(true);
+        for (const enemy of this.enemies.children) {
+            enemy.getComponent(EnemyTank).onDestroyed();
+        }
+
+        for (const bullet of this.playerBullets.children) {
+            bullet.getComponent(Bullet).onBulletDestory();
+        }
+
+        for (const bullet of this.enemiesBullets.children) {
+            bullet.getComponent(Bullet).onBulletDestory();
+        }
 
         for (const block of this.node.getChildByName("blocks").children) {
             if (block.name != "camp")

@@ -18,7 +18,7 @@ export default class PlayerTank extends BaseTank {
         if (!this.canMove) return;
 
         if (!this.autoMoving)
-            this.node.parent.getComponent(MapLayer).game.getComponent(Game).playAudio("player_move", true);
+            this.mapLayer.game.getComponent(Game).playAudio("player_move", true);
 
         this._setDir(dir);
         this._playMovingAnimation();
@@ -29,7 +29,7 @@ export default class PlayerTank extends BaseTank {
         if (!this.canMove) return;
 
         this.autoMoving = false;
-        this.node.parent.getComponent(MapLayer).game.getComponent(Game).stopAudio("player_move");
+        this.mapLayer.game.getComponent(Game).stopAudio("player_move");
         this._stopMovingAnimation();
     }
 
@@ -37,7 +37,7 @@ export default class PlayerTank extends BaseTank {
         if (!this.canMove)
             return;
 
-        this.node.parent.getComponent(MapLayer).createBullet(this.dir, this.node.position, this.step * 2, this);
+        this.mapLayer.createBullet(this.dir, this.node.position, this.step * 2, this);
     }
 
     public disBlood() {
@@ -47,16 +47,16 @@ export default class PlayerTank extends BaseTank {
         this.blood--;
 
         if (this.blood >= 0) {
-            // 播放死亡动画 TODO
+            this.mapLayer.game.getComponent(Game).playAudio("tank_bomb", false);
             this.canMove = false;
-            this.node.parent.getComponent(MapLayer).game.getComponent(Game).playAudio("tank_bomb", false);
             this._stopMovingAnimation();
-            this.getComponent(cc.Animation).play("blast");
         }
 
         if (this.blood != 0) {
             this.reset();
         } else {
+            // 播放死亡动画
+            this.getComponent(cc.Animation).play("blast");
             this.gameOver();
         }
 
@@ -70,7 +70,7 @@ export default class PlayerTank extends BaseTank {
      */
     public gameOver() {
         this.node.active = false;
-        this.node.parent.getComponent(MapLayer).game.getComponent(Game).stopAudio("player_move");
+        this.mapLayer.game.getComponent(Game).stopAudio("player_move");
         let visableSize = cc.view.getVisibleSize();
 
         let gameOverNode = cc.find("/Canvas/gameover_left");
@@ -135,7 +135,7 @@ export default class PlayerTank extends BaseTank {
         // 5秒后取消无敌状态
         this.scheduleOnce(() => {
             this._isInvincible = false;
-            
+
             animation.stop();
             this.ring.active = false;
         }, 5);
@@ -192,8 +192,6 @@ export default class PlayerTank extends BaseTank {
     }
 
     private _playMovingAnimation() {
-        if (this.autoMoving) return;
-
         this._movingAnimation = "moving_" + this.dir + "_" + this.level;
         this.getComponent(cc.Animation).play(this._movingAnimation);
     }
