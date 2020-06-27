@@ -12,79 +12,102 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class MapLayer extends cc.Component {
 
-    @property(cc.Prefab)
-    blockWall: cc.Prefab = null;
+    @property(cc.Node)
+    public game: cc.Node = null;
+
+    @property(cc.Node)
+    public player: cc.Node = null;
+
+    @property(cc.Node)
+    public blocks: cc.Node = null;
+
+    @property(cc.Node)
+    public enemiesBullets: cc.Node = null;
+
+    @property(cc.Node)
+    public playerBullets: cc.Node = null;
+
+    @property(cc.Node)
+    public enemies: cc.Node = null;
 
     @property(cc.Prefab)
-    blockStone: cc.Prefab = null;
+    private blockWall: cc.Prefab = null;
 
     @property(cc.Prefab)
-    blockForest: cc.Prefab = null;
+    private blockStone: cc.Prefab = null;
 
     @property(cc.Prefab)
-    blockIce: cc.Prefab = null;
+    private blockForest: cc.Prefab = null;
 
     @property(cc.Prefab)
-    blockRiver: cc.Prefab = null;
+    private blockIce: cc.Prefab = null;
 
     @property(cc.Prefab)
-    enemy: cc.Prefab = null;
+    private blockRiver: cc.Prefab = null;
 
     @property(cc.Prefab)
-    bullet: cc.Prefab = null;
+    private enemy: cc.Prefab = null;
 
-    @property(Game)
-    game: Game = null;
+    @property(cc.Prefab)
+    private bullet: cc.Prefab = null;
 
-    @property(PlayerTank)
-    player: PlayerTank = null;
+    private _bulletPool: cc.NodePool;
+    private _enemiesPool: cc.NodePool;
+    private _remainEnemiesCount: number;
 
-    blocks: any[];
-    enemiesBullets: cc.Node[];
-    playerBullets: cc.Node[];
-    enemies: cc.Node[];
-    bulletPool: cc.NodePool;
-    enemiesPool: cc.NodePool;
-    remainEnemiesCount: number;
+    public createBullet(dir: Dir, pos: cc.Vec3, step: number, tank: BaseTank) {
+        if (tank.bulletCount <= 0)
+            return;
 
-    init() {
-        // 清理子节点
-        for (const node of this.node.children) {
-            if (node.name == "player") {
-                node.getComponent(PlayerTank).init();
-            } else if (node.name == "camp") {
-                // 什么都不做
-            } else {
-                node.destroy();
-            }
+        let bullet: cc.Node;
+
+        if (this._bulletPool.size() > 0) {
+            bullet = this._bulletPool.get();
+        } else {
+            bullet = cc.instantiate(this.bullet);
         }
-        // 所有障碍方块
-        this.blocks = [];
-        // 敌人子弹
-        this.enemiesBullets = [];
-        // 玩家子弹
-        this.playerBullets = [];
-        // 敌人坦克
-        this.enemies = [];
 
-        // 子弹节点池
-        this.bulletPool = new cc.NodePool();
-        // 敌人节点池
-        this.enemiesPool = new cc.NodePool();
+        if (tank.isEnemy) {
+            bullet.parent = this.enemiesBullets;
+        } else {
+            this.game.getComponent(Game).playAudio("shoot", false);
+            bullet.parent = this.playerBullets;
+        }
 
-        this.remainEnemiesCount = Globals.ENEMIES_COUNT;
+        bullet.getComponent(Bullet).init(dir, pos, step, tank);
+    }
+
+    public destoryBullet(bullet: cc.Node, isEnemy: any) {
+        this._bulletPool.put(bullet)
+    }
+
+    public destoryEnemy(enemy: cc.Node) {
+        this._enemiesPool.put(enemy);
+    }
+
+    protected onLoad() {
+        this._bulletPool = new cc.NodePool();
+        this._enemiesPool = new cc.NodePool();
+    }
+    
+    protected onEnable() {
+        this._remainEnemiesCount = Globals.ENEMIES_COUNT;
+        
+        // 清理子节点
+        this._cleanChildNode();
 
         // 加载地图
         this._loadMap();
 
+        // 生成敌人
         this.spawnNewEnemy();
 
-        // 开启计时器自动生成敌人
+        // 每隔4.5秒生成一个敌人
         this.schedule(this.spawnNewEnemy, 4.5);
 
         // 检查游戏是否胜利
         this.schedule(() => {
-            if (this.enemies.length == 0 && this.remainEnemiesCount == 0) {
+            if (this.enemies.childrenCount == 0 && this._remainEnemiesCount == 0) {
                 this.unscheduleAllCallbacks();
                 // 两秒后跳转到下一关
                 this.scheduleOnce(this.toNextStage, 2);
@@ -92,50 +115,18 @@ export default class MapLayer extends cc.Component {
         }, 0.1);
     }
 
-    createBullet(dir: Dir, pos: cc.Vec3, step: number, tank: BaseTank) {
-        if (tank.bulletCount <= 0)
+    private spawnNewEnemy() {
+        if (this.enemies.childrenCount >= 6)
             return;
 
-        let bullet = null;
-        if (this.bulletPool.size() > 0) {
-            bullet = this.bulletPool.get();
-        } else {
-            bullet = cc.instantiate(this.bullet);
-        }
-
-        if (tank.isEnemy)
-            this.enemiesBullets.push(bullet);
-        else {
-            this.game.playAudio("shoot", false);
-            this.playerBullets.push(bullet);
-        }
-
-        bullet.parent = this.node;
-        bullet.getComponent(Bullet).init(dir, pos, step, tank);
-    }
-
-
-    destoryBullet(bullet: cc.Node, isEnemy: any) {
-        if (isEnemy)
-            this.enemiesBullets.splice(this.enemiesBullets.indexOf(bullet), 1);
-        else
-            this.playerBullets.splice(this.playerBullets.indexOf(bullet), 1);
-
-        this.bulletPool.put(bullet)
-    }
-
-    spawnNewEnemy() {
-        if (this.enemies.length >= 6)
+        if (this._remainEnemiesCount <= 0)
             return;
 
-        if (this.remainEnemiesCount <= 0)
-            return;
-
-        if (this.remainEnemiesCount == Globals.ENEMIES_COUNT) {
+        if (this._remainEnemiesCount == Globals.ENEMIES_COUNT) {
             this.createEnemy(Globals.ENEMY1);
             this.createEnemy(Globals.ENEMY2);
             this.createEnemy(Globals.ENEMY3);
-        } else if (this.remainEnemiesCount > 0) {
+        } else if (this._remainEnemiesCount > 0) {
             let choice = Math.floor(Math.random() * 3);
             let pos: cc.Vec2;
 
@@ -156,64 +147,51 @@ export default class MapLayer extends cc.Component {
         }
     }
 
-    createEnemy(pos: cc.Vec2) {
-        let enemy = null;
-        if (this.enemiesPool.size() > 0) {
-            enemy = this.enemiesPool.get();
+    private createEnemy(pos: cc.Vec2) {
+        let enemy: cc.Node;
+
+        if (this._enemiesPool.size() > 0) {
+            enemy = this._enemiesPool.get();
         } else {
             enemy = cc.instantiate(this.enemy);
         }
 
-        this.enemies.push(enemy);
-        enemy.parent = this.node;
-        enemy.getComponent(EnemyTank).init(pos);
+        enemy.parent = this.enemies;
+        enemy.getComponent(EnemyTank).init(new cc.Vec3(pos.x, pos.y));
 
         // 更新信息区域
-        cc.find("/Game/Informations").getComponent(UpdateInformations).deleteOneIcon();
+        cc.find("/Canvas/Informations").getComponent(UpdateInformations).deleteOneIcon();
 
-        this.remainEnemiesCount--;
+        this._remainEnemiesCount--;
     }
 
-
-    destoryEnemy(enemy: cc.Node) {
-        this.enemies.splice(this.enemies.indexOf(enemy), 1);
-        this.enemiesPool.put(enemy);
-    }
-
-    toNextStage() {
-        let game = cc.find("Game").getComponent(Game);
+    private toNextStage() {
+        let game = cc.find("Canvas").getComponent(Game);
         game.level++;
 
         game.init();
     }
 
-    _loadMap() {
-        // 显示大本营
-        this._loadMapData();
-    }
-
-    _loadMapData() {
+    private _loadMap() {
         let self = this;
 
-        cc.loader.loadRes("maps/" + this.game.level, function (err, file) {
+        cc.loader.loadRes("maps/" + this.game.getComponent(Game).level, function (err, file) {
             let data = file.text;
             let index = 0;
 
             for (let i = 0; i != 26; i++) {
                 for (let j = 0; j != 26; j++) {
-                    let block: cc.Node = null;
+                    let block: cc.Node;
 
                     switch (data[index++]) {
                         case '3':
                             block = cc.instantiate(self.blockWall);
                             block.name = "block_wall";
                             block.getComponent(BlockWall).init();
-                            self.blocks.push(block);
                             break;
                         case '5':
                             block = cc.instantiate(self.blockStone);
                             block.name = "block_stone";
-                            self.blocks.push(block);
                             break;
                         case '1':
                             block = cc.instantiate(self.blockForest);
@@ -221,19 +199,18 @@ export default class MapLayer extends cc.Component {
                             break;
                         case '2':
                             block = cc.instantiate(self.blockIce);
-                            block.zIndex = self.player.node.zIndex - 1;
+                            block.zIndex = self.player.zIndex - 1;
                             break;
                         case '4':
                             block = cc.instantiate(self.blockRiver);
                             block.getComponent(cc.Animation).play("river");
-                            self.blocks.push(block);
                             break;
                         default:
                             break;
                     }
 
                     if (block) {
-                        block.parent = self.node;
+                        block.parent = self.blocks;
                         block.setAnchorPoint(0, 0);
                         block.setPosition(j * Globals.BLOCK_SIZE, (25 - i) * Globals.BLOCK_SIZE);
                     }
@@ -242,7 +219,7 @@ export default class MapLayer extends cc.Component {
         });
     }
 
-    _canSpawnTank(pos: { x: number; y: number; }) {
+    private _canSpawnTank(pos: { x: number; y: number; }) {
         let box = new cc.Rect(
             pos.x - Globals.TANK_SIZE / 2 - 1,
             pos.y - Globals.TANK_SIZE / 2 - 1,
@@ -250,8 +227,8 @@ export default class MapLayer extends cc.Component {
             Globals.TANK_SIZE
         );
 
-        let tanks = this.enemies;
-        let player = this.player.node;
+        let tanks = this.enemies.children;
+        let player = this.player;
 
         for (let i = 0; i != tanks.length; i++) {
             if (tanks[i].getBoundingBox().intersects(box))
@@ -263,4 +240,16 @@ export default class MapLayer extends cc.Component {
 
         return true;
     }
+
+    private _cleanChildNode() {
+        this.node.getChildByName("enemies").removeAllChildren(true);
+        this.playerBullets.removeAllChildren(true);
+        this.enemiesBullets.removeAllChildren(true);
+
+        for (const block of this.node.getChildByName("blocks").children) {
+            if (block.name != "camp")
+                block.destroy();
+        }
+    }
+
 }

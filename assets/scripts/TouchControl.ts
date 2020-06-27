@@ -6,23 +6,30 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class TouchControl extends cc.Component {
     @property([cc.Node])
-    buttons: cc.Node[] = [];
+    private buttons: cc.Node[] = [];
 
     @property(PlayerTank)
-    player: PlayerTank = null;
+    private player: PlayerTank = null;
 
-    init() {
+    protected onLoad() {
         // 设置位置
         let size = cc.view.getVisibleSize();
 
         this.node.x = size.width * 0.05 + this.node.width * 0.5 - size.width * 0.5;
         this.node.y = size.height * 0.1 + this.node.height * 0.5 - size.height * 0.5;
+    }
 
+    protected onEnable() {
         this.node.parent.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this, true);
         this.node.parent.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this, true);
     }
 
-    onTouchStart(event: cc.Event.EventTouch) {
+    protected onDisable() {
+        this.node.parent.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this, true);
+        this.node.parent.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this, true);
+    }
+
+    private onTouchStart(event: cc.Event.EventTouch) {
         let globalPos = this.node.parent.convertToNodeSpaceAR(event.touch.getLocation());
 
         if (this.node.getBoundingBox().contains(globalPos)) {
@@ -42,7 +49,7 @@ export default class TouchControl extends cc.Component {
         }
     }
 
-    onTouchEnd(event: cc.Event.EventTouch) {
+    private onTouchEnd(event: cc.Event.EventTouch) {
         let pos = this.node.convertToNodeSpaceAR(event.touch.getLocation());
 
         if (this.buttons[0].getBoundingBox().contains(pos) ||

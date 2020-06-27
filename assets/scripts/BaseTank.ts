@@ -1,21 +1,24 @@
 import { Globals, Dir } from "./Globals";
 import { Utils } from "./Utils";
+import MapLayer from "./MapLayer";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class BaseTank extends cc.Component {
-    level: number;
-    dir: number;
-    step: number;
-    blood: number;
-    canMove: boolean;
-    autoMoving: boolean;
-    isEnemy: boolean;
-    bulletCount: number;
+    public bulletCount: number;
+    public isEnemy: boolean;
+    protected level: number;
+    protected dir: number;
+    protected step: number;
+    protected blood: number;
+    protected canMove: boolean;
+    protected autoMoving: boolean;
+    protected mapLayer: MapLayer;
 
-    constructor() {
+    public constructor() {
         super();
+        
         this.level = 0;
         this.dir = Dir.DOWN;
         this.step = 1;
@@ -39,7 +42,7 @@ export default class BaseTank extends cc.Component {
     }
 
     protected _isCollisionWithBlock() {
-        let blocks = this.node.parent.getComponent("MapLayer").blocks;
+        let blocks = this.mapLayer.blocks.children;
         let rect = this.node.getBoundingBox();
 
         for (let i = 0; i != blocks.length; i++) {
@@ -54,8 +57,8 @@ export default class BaseTank extends cc.Component {
 
     protected _isCollisionWithTank() {
         let box = this.node.getBoundingBox();
-        let tanks = this.node.parent.getComponent("MapLayer").enemies;
-        let player = this.node.parent.getComponent("MapLayer").player.node;
+        let tanks = this.mapLayer.enemies.children;
+        let player = this.mapLayer.player;
 
         if (this.isEnemy) {
             if (box.intersects(player.getBoundingBox()))

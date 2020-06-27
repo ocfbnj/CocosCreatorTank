@@ -7,14 +7,11 @@ export default class UpdateInformations extends cc.Component {
     @property(cc.Prefab)
     enemyIcon: cc.Prefab = null;
 
-    enemyIcons: cc.Node[] = [];
+    @property(cc.Node)
+    enemiesIcon: cc.Node = null;
 
-    init() {
-        for (const node of this.enemyIcons) {
-            node.destroy();
-        }
-
-        this.enemyIcons = [];
+    protected onEnable() {
+        let gridLayout = this.enemiesIcon.getComponent(cc.Layout);
 
         let x = -4;
         let y = 80;
@@ -23,25 +20,27 @@ export default class UpdateInformations extends cc.Component {
             for (let j = 0; j != 2; j++) {
                 let node = cc.instantiate(this.enemyIcon);
                 node.name = "icon";
-                node.parent = this.node;
+                node.parent = this.enemiesIcon;
 
                 node.x = x + j * 8;
                 node.y = y - i * 8;
-
-                this.enemyIcons.push(node);
             }
         }
     }
 
-    deleteOneIcon() {
-        this.enemyIcons.pop().destroy();
+    protected onDisable() {
+        this.enemiesIcon.removeAllChildren(true);
     }
 
-    updatePlayerBlood(blood: number) {
+    public deleteOneIcon() {
+        this.enemiesIcon.children[this.enemiesIcon.childrenCount - 1].destroy();
+    }
+
+    public updatePlayerBlood(blood: number) {
         this.node.getChildByName("player_blood").getComponent(cc.Label).string = blood.toString();
     }
 
-    updateCurrentLevel(level: number) {
+    public updateCurrentLevel(level: number) {
         this.node.getChildByName("cur_level").getComponent(cc.Label).string = level.toString();
     }
 }

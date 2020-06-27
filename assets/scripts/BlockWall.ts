@@ -1,17 +1,15 @@
-import MapLayer from "./MapLayer";
-
 const { ccclass } = cc._decorator;
 
 @ccclass
 export default class BlockWall extends cc.Component {
-    init() {
+    public init() {
         let children = this.node.children;
         for (let i = 0; i < children.length; i++) {
             children[i].active = false;
         }
     }
 
-    tryDestory(box: cc.Rect) {
+    public tryDestory(box: cc.Rect) {
         let flag = false; // 是否与子弹发生碰撞
 
         let blacks = this.node.children;
@@ -34,11 +32,6 @@ export default class BlockWall extends cc.Component {
         }
 
         if (this._isDestory()) {
-            // 从MapLayer中的数组中移除并销毁该对象
-            let blocks = this.node.parent.getComponent(MapLayer).blocks;
-            let index = blocks.indexOf(this.node);
-
-            blocks.splice(index, 1);
             this.node.destroyAllChildren();
             this.node.destroy();
         }
@@ -46,7 +39,7 @@ export default class BlockWall extends cc.Component {
         return flag;
     }
 
-    _isDestory() {
+    private _isDestory() {
         let blacks = this.node.children;
 
         for (let i = 0; i != blacks.length; i++) {

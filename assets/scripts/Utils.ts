@@ -1,5 +1,5 @@
 // 将给定数字调整为8的倍数
-function adjustNumber(number) {
+function adjustNumber(number: number) {
     number = Math.round(number);
 
     if (number % 8 != 0) {

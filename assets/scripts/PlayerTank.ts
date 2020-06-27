@@ -8,45 +8,150 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class PlayerTank extends BaseTank {
-    isInvincible: boolean;
+    @property(cc.Node)
+    private ring: cc.Node = null;
 
-    constructor() {
-        super();
-        this.isEnemy = false;
-        this.isInvincible = false;
+    private _isInvincible: boolean;
+    private _movingAnimation: string;
+
+    public control(dir: Dir) {
+        if (!this.canMove) return;
+
+        if (!this.autoMoving)
+            this.node.parent.getComponent(MapLayer).game.getComponent(Game).playAudio("player_move", true);
+
+        this._setDir(dir);
+        this._playMovingAnimation();
+        this.autoMoving = true;
     }
 
-    onLoad() {
-        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
-        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+    public controlStop() {
+        if (!this.canMove) return;
+
+        this.autoMoving = false;
+        this.node.parent.getComponent(MapLayer).game.getComponent(Game).stopAudio("player_move");
+        this._stopMovingAnimation();
+    }
+
+    public shoot() {
+        if (!this.canMove)
+            return;
+
+        this.node.parent.getComponent(MapLayer).createBullet(this.dir, this.node.position, this.step * 2, this);
+    }
+
+    public disBlood() {
+        if (this._isInvincible)
+            return;
+
+        this.blood--;
+
+        if (this.blood >= 0) {
+            // 播放死亡动画 TODO
+            this.canMove = false;
+            this.node.parent.getComponent(MapLayer).game.getComponent(Game).playAudio("tank_bomb", false);
+            this._stopMovingAnimation();
+            this.getComponent(cc.Animation).play("blast");
+        }
+
+        if (this.blood != 0) {
+            this.reset();
+        } else {
+            this.gameOver();
+        }
+
+        // 更新剩余生命值
+        if (this.blood > 0)
+            cc.find("/Canvas/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
+    }
+
+    /**
+     * 播放一个从左到右的game over动画，然后播放游戏失败流程动画
+     */
+    public gameOver() {
+        this.node.active = false;
+        this.node.parent.getComponent(MapLayer).game.getComponent(Game).stopAudio("player_move");
+        let visableSize = cc.view.getVisibleSize();
+
+        let gameOverNode = cc.find("/Canvas/gameover_left");
+        gameOverNode.active = true;
+        gameOverNode.setPosition(-visableSize.width / 2 - gameOverNode.width / 2, -94);
+
+        // 播放右移动画
+        cc.tween(gameOverNode)
+            .to(1.5, { x: -35, y: -94 })
+            .delay(1)
+            .call(() => {
+                // 播放上升动画
+                cc.find("/Canvas").getComponent(Game).gameOverUp();
+            })
+            .start();
+    }
+
+    /**
+     * 回到起始位置，并播放出生动画
+     * */
+    public reset() {
+        this._isInvincible = true;
+        this._setDir(Dir.UP);
+        this.node.setPosition(80, 8);
+        this.getComponent(cc.Animation).play("star");
+        cc.find("/Canvas/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
+    }
+
+    protected onLoad() {
         this.blood = 3;
+        this.isEnemy = false;
+        this.mapLayer = this.node.parent.getComponent(MapLayer);
 
         // TODO
         this.bulletCount = 2;
     }
 
-    init() {
-        this.node.active = true;
-        this.getComponent(cc.Animation).play("star");
-        cc.find("/Game/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
+    protected onEnable() {
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
+
+        this.reset();
+    }
+
+    protected onDisable() {
+        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
+        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
+
+        this.canMove = false;
     }
 
     // 播放完star动画后调用
-    afterStart() {
-        this.setDir(Dir.UP);
-        this.node.setPosition(80, 8);
+    protected afterStar() {
         this.canMove = true;
-        this.node.getChildByName("ring").getComponent("Ring").play();
+        this._isInvincible = true;
+        this._playMovingAnimation();
+
+        this.ring.active = true;
+        let animation = this.ring.getComponent(cc.Animation);
+        animation.play("ring");
+
+        // 5秒后取消无敌状态
+        this.scheduleOnce(() => {
+            this._isInvincible = false;
+            
+            animation.stop();
+            this.ring.active = false;
+        }, 5);
     }
 
-    update(dt: number) {
+    protected update(dt: number) {
+        if (!this.canMove)
+            return;
+
         if (this.autoMoving) {
-            let realStep = (this.step + 40) * dt;
+            let realStep = this.step * 40 * dt;
             this._autoMoving(realStep);
         }
     }
 
-    onKeyDown(event: { keyCode: cc.macro.KEY; }) {
+    private _onKeyDown(event: { keyCode: cc.macro.KEY; }) {
         if (!this.canMove)
             return;
 
@@ -70,26 +175,7 @@ export default class PlayerTank extends BaseTank {
         }
     }
 
-    control(dir: Dir) {
-        if (!this.canMove) return;
-
-        if (!this.autoMoving)
-            this.node.parent.getComponent(MapLayer).game.playAudio("player_move", true);
-
-        this.setDir(dir);
-        this.playAnimation();
-        this.autoMoving = true;
-    }
-
-    controlStop() {
-        if (!this.canMove) return;
-
-        this.autoMoving = false;
-        this.node.parent.getComponent(MapLayer).game.stopAudio("player_move");
-        this.stopAnimation();
-    }
-
-    onKeyUp(event: { keyCode: cc.macro.KEY; }) {
+    private _onKeyUp(event: cc.Event.EventKeyboard) {
         if (!this.canMove)
             return;
 
@@ -105,22 +191,23 @@ export default class PlayerTank extends BaseTank {
         }
     }
 
-    playAnimation() {
+    private _playMovingAnimation() {
         if (this.autoMoving) return;
 
-        let animation = "moving_" + this.dir + "_" + this.level;
-        this.getComponent(cc.Animation).play(animation);
+        this._movingAnimation = "moving_" + this.dir + "_" + this.level;
+        this.getComponent(cc.Animation).play(this._movingAnimation);
     }
 
-    stopAnimation() {
-        this.getComponent(cc.Animation).stop();
+    private _stopMovingAnimation() {
+        this.getComponent(cc.Animation).stop(this._movingAnimation);
     }
 
-    setDir(dir: Dir) {
+    private _setDir(dir: Dir) {
         if (this.dir == dir)
             return;
 
         let oldPosition = this.node.position;
+
         // 调整位置为8的整数倍
         this._adjustPosition();
 
@@ -132,66 +219,10 @@ export default class PlayerTank extends BaseTank {
         this.dir = dir;
 
         // 产生贴图
-        this.playAnimation();
+        this._playMovingAnimation();
     }
 
-    shoot() {
-        if (!this.canMove)
-            return;
-
-        this.node.parent.getComponent(MapLayer).createBullet(this.dir, this.node.position, this.step * 2, this);
-    }
-
-    disBlood() {
-        if (this.isInvincible)
-            return;
-
-        cc.log("player disBlood");
-
-        this.blood--;
-
-        if (this.blood >= 0) {
-            // 播放死亡动画
-            this.canMove = false;
-            this.node.parent.getComponent(MapLayer).game.playAudio("tank_bomb", false);
-            this.stopAnimation();
-            this.getComponent(cc.Animation).play("blast");
-        }
-
-        if (this.blood != 0) {
-            // 回到初始位置，不播放星星动画
-            this.afterStart();
-
-        } else {
-            // 让坦克消失
-            this.node.active = false;
-            // 播放小的game over动画
-            this.gameOver();
-        }
-
-        if (this.blood > 0)
-            // 更新剩余生命值
-            cc.find("/Game/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
-    }
-
-    gameOver() {
-        this.node.parent.getComponent(MapLayer).game.stopAudio("player_move");
-        let visableSize = cc.view.getVisibleSize();
-        let gameOverNode = cc.find("/Game/gameover");
-        gameOverNode.active = true;
-        gameOverNode.setPosition(-visableSize.width / 2 - gameOverNode.width / 2, -94);
-
-        // 播放右移动画
-        cc.tween(gameOverNode)
-            .to(1.5, { position: cc.v2(-35, -94) })
-            .call(() => {
-                // 播放上升动画
-                cc.find("/Game").getComponent(Game).gameOverUp();
-            })
-            .start();
-    }
-
-    _autoMoving(realStep) {
+    private _autoMoving(realStep) {
         // 记录移动前的位置
         let oldPosition = this.node.position;
 

@@ -1,6 +1,7 @@
 import BaseTank from "./BaseTank"
 import { Dir } from "./Globals"
 import MapLayer from "./MapLayer";
+import Game from "./Game";
 
 const { ccclass, property } = cc._decorator;
 
@@ -11,6 +12,7 @@ export default class EnemyTank extends BaseTank {
 
     constructor() {
         super();
+        
         this.curDistance = 0;
         this.maxDistance = 100;
     }
@@ -23,6 +25,8 @@ export default class EnemyTank extends BaseTank {
     }
 
     init(pos: cc.Vec3) {
+        this.mapLayer = cc.find("/Canvas/MapLayer").getComponent(MapLayer);
+
         this.curDistance = 0;
         this.level = Math.ceil(Math.random() * 4);
 
@@ -53,7 +57,7 @@ export default class EnemyTank extends BaseTank {
         }, 0.5)
     }
 
-    afterStart() {
+    afterStar() {
         this.autoMoving = true;
         this.setDir(Dir.DOWN);
         this.playAnimation();
@@ -96,7 +100,7 @@ export default class EnemyTank extends BaseTank {
     }
 
     shoot() {
-        this.node.parent.getComponent(MapLayer).createBullet(this.dir, this.node.position, this.step * 2, this);
+        this.mapLayer.createBullet(this.dir, this.node.position, this.step * 2, this);
     }
 
     playAnimation() {
@@ -119,13 +123,13 @@ export default class EnemyTank extends BaseTank {
 
         if (--this.blood == 0) {
             this.unscheduleAllCallbacks();
-            this.node.parent.getComponent(MapLayer).game.playAudio("tank_bomb", false);
+            this.mapLayer.game.getComponent(Game).playAudio("tank_bomb", false);
 
             this.stopAnimation();
 
             this.getComponent(cc.Animation).play("blast");
         } else {
-            this.node.parent.getComponent(MapLayer).game.playAudio("bin", false);
+            this.mapLayer.game.getComponent(Game).playAudio("bin", false);
 
             // 刷新动画
             this.playAnimation();
@@ -135,7 +139,7 @@ export default class EnemyTank extends BaseTank {
 
     onDestroyed() {
         this.autoMoving = false;
-        this.node.parent.getComponent(MapLayer).destoryEnemy(this.node);
+        this.mapLayer.destoryEnemy(this.node);
     }
 
     _autoMoving(realStep: number) {

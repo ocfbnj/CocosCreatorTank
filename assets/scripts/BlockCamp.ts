@@ -5,16 +5,12 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class BlockCamp extends cc.Component {
     @property(cc.SpriteFrame)
-    destoryed: cc.SpriteFrame = null;
+    private destoryed: cc.SpriteFrame = null;
 
-    start() {
-        this.node.parent.getComponent("MapLayer").blocks.push(this.node);
-    }
-
-    tryDestory() {
+    public tryDestory() {
         this.getComponent(cc.Sprite).spriteFrame = this.destoryed;
 
-        let game = cc.find("/Game").getComponent(Game);
+        let game = cc.find("/Canvas").getComponent(Game);
         // 播放爆炸音效
         game.playAudio("camp_bomb");
 
