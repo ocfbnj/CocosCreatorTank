@@ -1,21 +1,14 @@
-import { Globals } from "./Globals";
-
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class UpdateInformations extends cc.Component {
     @property(cc.Prefab)
-    enemyIcon: cc.Prefab = null;
+    private enemyIcon: cc.Prefab = null;
 
     @property(cc.Node)
-    enemiesIcon: cc.Node = null;
+    private enemiesIcon: cc.Node = null;
 
     protected onEnable() {
-        let gridLayout = this.enemiesIcon.getComponent(cc.Layout);
-
-        let x = -4;
-        let y = 80;
-
         for (let i = 0; i != 10; i++) {
             for (let j = 0; j != 2; j++) {
                 let node = cc.instantiate(this.enemyIcon);
