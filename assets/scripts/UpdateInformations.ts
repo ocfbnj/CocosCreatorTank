@@ -21,9 +21,6 @@ export default class UpdateInformations extends cc.Component {
                 let node = cc.instantiate(this.enemyIcon);
                 node.name = "icon";
                 node.parent = this.enemiesIcon;
-
-                node.x = x + j * 8;
-                node.y = y - i * 8;
             }
         }
     }
