@@ -54,7 +54,7 @@ export default class EnemyTank extends BaseTank {
                 return;
             if (Math.random() > 0.5)
                 this.shoot();
-        }, 0.5)
+        }, 0.5);
     }
 
     afterStar() {
