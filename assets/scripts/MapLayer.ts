@@ -1,5 +1,4 @@
 import Game from "./Game";
-import PlayerTank from "./PlayerTank";
 import { Globals, Dir } from "./Globals";
 import Bullet from "./Bullet";
 import EnemyTank from "./EnemyTank";

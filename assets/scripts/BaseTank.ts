@@ -2,7 +2,7 @@ import { Globals, Dir } from "./Globals";
 import { Utils } from "./Utils";
 import MapLayer from "./MapLayer";
 
-const { ccclass, property } = cc._decorator;
+const { ccclass } = cc._decorator;
 
 @ccclass
 export default class BaseTank extends cc.Component {
