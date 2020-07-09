@@ -6,6 +6,7 @@ import BlockWall from "./BlockWall";
 import BlockCamp from "./BlockCamp";
 import Game from "./Game";
 import PlayerTank from "./PlayerTank";
+import AudioMng from "../AudioMng";
 
 const { ccclass, property } = cc._decorator;
 
@@ -22,7 +23,7 @@ export default class Bullet extends cc.Component {
     private mapLayer: MapLayer;
 
     public init(dir: Dir, pos: cc.Vec3, step: number, tank: BaseTank) {
-        this.mapLayer = cc.find("/Canvas/MapLayer").getComponent(MapLayer);
+        this.mapLayer = cc.find("/Canvas/GameLayer/MapLayer").getComponent(MapLayer);
         this.tank = tank;
         this.tank.bulletCount--;
         this.isEnemy = tank instanceof EnemyTank;
@@ -103,7 +104,7 @@ export default class Bullet extends cc.Component {
         if (node.x - offset < 0 || node.x + offset > Globals.MAP_WIDTH ||
             node.y + offset > Globals.MAP_HEIGHT || node.y - offset < 0) {
             if (!this.isEnemy)
-                this.mapLayer.game.getComponent(Game).playAudio("bin", false);
+                cc.find("/Game/AudioMng").getComponent(AudioMng).playAudio("bin", false);
             return true;
         }
 
@@ -145,7 +146,7 @@ export default class Bullet extends cc.Component {
                     }
                 } else if (block.name == "block_stone") {
                     if (!this.isEnemy)
-                        this.mapLayer.game.getComponent(Game).playAudio("bin", false);
+                        cc.find("/Game/AudioMng").getComponent(AudioMng).playAudio("bin", false);
                     count++;
                 } else if (block.name == "camp") {
                     block.getComponent(BlockCamp).tryDestory();
