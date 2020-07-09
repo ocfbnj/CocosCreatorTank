@@ -161,17 +161,19 @@ export default class Bullet extends cc.Component {
     private _isCollisionWithTank() {
         let box = this.node.getBoundingBox();
         if (this.isEnemy) {
-            let player = this.mapLayer.player;
-            if (box.intersects(player.getBoundingBox())) {
-                player.getComponent(PlayerTank).disBlood();
+            let players = this.mapLayer.players.children;
+            for (const player of players) {
+                if (box.intersects(player.getBoundingBox())) {
+                    player.getComponent(PlayerTank).disBlood();
 
-                return true;
+                    return true;
+                }
             }
         } else {
             let enemies = this.mapLayer.enemies.children;
-            for (let i = 0; i != enemies.length; i++) {
-                if (box.intersects(enemies[i].getBoundingBox())) {
-                    enemies[i].getComponent(EnemyTank).disBlood();
+            for (const enemy of enemies) {
+                if (box.intersects(enemy.getBoundingBox())) {
+                    enemy.getComponent(EnemyTank).disBlood();
 
                     return true;
                 }

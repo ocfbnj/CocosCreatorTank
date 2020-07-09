@@ -119,11 +119,11 @@ export default class Game extends cc.Component {
 
             gameLayer.active = true;
 
-            // 初始化地图
-            mapLayer.init();
-
             // 初始化信息区域
             informations.init(this.level);
+
+            // 初始化地图
+            mapLayer.init();
         }, 1);
     }
 }

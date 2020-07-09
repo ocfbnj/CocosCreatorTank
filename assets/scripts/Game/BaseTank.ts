@@ -1,5 +1,5 @@
 import { Globals, Dir } from "./Globals";
-import { Utils } from "./Utils";
+import { adjustNumber } from "./Utils";
 import MapLayer from "./MapLayer";
 
 const { ccclass } = cc._decorator;
@@ -8,9 +8,8 @@ const { ccclass } = cc._decorator;
 export default class BaseTank extends cc.Component {
     public bulletCount: number;
     public isEnemy: boolean;
-    protected level: number;
-    protected dir: number;
-    protected step: number;
+    public level: number;
+    protected dir: Dir;
     protected blood: number;
     protected canMove: boolean;
     protected autoMoving: boolean;
@@ -20,8 +19,7 @@ export default class BaseTank extends cc.Component {
         super();
 
         this.level = 0;
-        this.dir = Dir.DOWN;
-        this.step = 1;
+        this.dir = Dir.LEFT;
         this.blood = 1;
         this.canMove = false;
         this.autoMoving = false;
@@ -61,24 +59,17 @@ export default class BaseTank extends cc.Component {
 
     protected _isCollisionWithTank() {
         let box = this.node.getBoundingBox();
-        let tanks = this.mapLayer.enemies.children;
-        let player = this.mapLayer.player;
+        let enemies = this.mapLayer.enemies.children;
+        let players = this.mapLayer.players.children;
 
-        if (this.isEnemy) {
-            if (box.intersects(player.getBoundingBox()))
+        for (const enemy of enemies) {
+            if (enemy != this.node && box.intersects(enemy.getBoundingBox()))
                 return true;
+        }
 
-            for (let i = 0; i != tanks.length; i++) {
-                if (tanks[i] != this.node && box.intersects(tanks[i].getBoundingBox())) {
-                    return true;
-                }
-            }
-        } else {
-            for (let i = 0; i != tanks.length; i++) {
-                if (box.intersects(tanks[i].getBoundingBox())) {
-                    return true;
-                }
-            }
+        for (const player of players) {
+            if (player != this.node && box.intersects(player.getBoundingBox()))
+                return true;
         }
 
         return false;
@@ -86,7 +77,7 @@ export default class BaseTank extends cc.Component {
 
     // 调整位置为8的整数倍
     protected _adjustPosition() {
-        this.node.x = Utils.adjustNumber(this.node.x);
-        this.node.y = Utils.adjustNumber(this.node.y);
+        this.node.x = adjustNumber(this.node.x);
+        this.node.y = adjustNumber(this.node.y);
     }
 }

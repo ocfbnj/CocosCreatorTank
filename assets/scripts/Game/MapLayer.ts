@@ -6,22 +6,25 @@ import BlockWall from "./BlockWall";
 import BaseTank from "./BaseTank";
 import UpdateInformations from "./UpdateInformations";
 import AudioMng from "../AudioMng";
+import PlayerTank from "./PlayerTank";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class MapLayer extends cc.Component {
+    // 节点
     @property(cc.Node)
-    public player: cc.Node = null;
+    public players: cc.Node = null;
+    @property(cc.Node)
+    public enemies: cc.Node = null;
     @property(cc.Node)
     public blocks: cc.Node = null;
     @property(cc.Node)
     public enemiesBullets: cc.Node = null;
     @property(cc.Node)
     public playerBullets: cc.Node = null;
-    @property(cc.Node)
-    public enemies: cc.Node = null;
 
+    // 预制资源
     @property(cc.Prefab)
     private blockWall: cc.Prefab = null;
     @property(cc.Prefab)
@@ -32,6 +35,8 @@ export default class MapLayer extends cc.Component {
     private blockIce: cc.Prefab = null;
     @property(cc.Prefab)
     private blockRiver: cc.Prefab = null;
+    @property(cc.Prefab)
+    private player: cc.Prefab = null;
     @property(cc.Prefab)
     private enemy: cc.Prefab = null;
     @property(cc.Prefab)
@@ -85,6 +90,11 @@ export default class MapLayer extends cc.Component {
         // 生成敌人
         this.spawnNewEnemy();
 
+        // 初始化玩家
+        for (const player of this.players.children) {
+            player.getComponent(PlayerTank).reset();
+        }
+
         // 每隔4.5秒生成一个敌人
         this.schedule(this.spawnNewEnemy, 4.5);
 
@@ -104,6 +114,9 @@ export default class MapLayer extends cc.Component {
 
         this._bulletPool = new cc.NodePool();
         this._enemiesPool = new cc.NodePool();
+
+        // 生成玩家
+        this.spawnPlayer();
     }
 
     private spawnNewEnemy() {
@@ -136,6 +149,12 @@ export default class MapLayer extends cc.Component {
             // 取消计时器
             this.unschedule(this.spawnNewEnemy);
         }
+    }
+
+    private spawnPlayer() {
+        let player1 = cc.instantiate(this.player);
+        player1.parent = this.players;
+        player1.getComponent(PlayerTank).init();
     }
 
     private createEnemy(pos: cc.Vec2) {
@@ -189,7 +208,7 @@ export default class MapLayer extends cc.Component {
                                 break;
                             case '2':
                                 block = cc.instantiate(self.blockIce);
-                                block.zIndex = self.player.zIndex - 1;
+                                block.zIndex = self.players.zIndex - 1;
                                 break;
                             case '4':
                                 block = cc.instantiate(self.blockRiver);
@@ -211,7 +230,7 @@ export default class MapLayer extends cc.Component {
         });
     }
 
-    private _canSpawnTank(pos: { x: number; y: number; }) {
+    private _canSpawnTank(pos: cc.Vec2) {
         let box = new cc.Rect(
             pos.x - Globals.TANK_SIZE / 2,
             pos.y - Globals.TANK_SIZE / 2,
@@ -219,16 +238,18 @@ export default class MapLayer extends cc.Component {
             Globals.TANK_SIZE
         );
 
-        let tanks = this.enemies.children;
-        let player = this.player;
+        let enemies = this.enemies.children;
+        let players = this.players.children;
 
-        for (let i = 0; i != tanks.length; i++) {
-            if (tanks[i].getBoundingBox().intersects(box))
+        for (const enemy of enemies) {
+            if (box.intersects(enemy.getBoundingBox()))
                 return false;
         }
 
-        if (player.getBoundingBox().intersects(box))
-            return false;
+        for (const player of players) {
+            if (box.intersects(player.getBoundingBox()))
+                return false;
+        }
 
         return true;
     }
