@@ -9,30 +9,31 @@ export default class TouchControl extends cc.Component {
     private buttons: cc.Node[] = [];
     @property(PlayerTank)
     private player: PlayerTank = null;
+    
+    private _node: cc.Node = null;
 
     protected onLoad() {
-        // if (cc.sys.isMobile) {
-        //     this.node.active = true;
-        // } else {
-        //     this.node.active = false;
-        // }
+        if (cc.sys.isMobile) {
+            this.node.active = true;
+        } else {
+            this.node.active = false;
+        }
 
-        // 默认激活，调试用 TODO
-        this.node.active = true;
+        this._node = cc.find("/Canvas");
     }
 
     protected onEnable() {
-        this.node.parent.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this, true);
-        this.node.parent.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this, true);
+        this._node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this, true);
+        this._node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this, true);
     }
 
     protected onDisable() {
-        this.node.parent.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this, true);
-        this.node.parent.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this, true);
+        this._node.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this, true);
+        this._node.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this, true);
     }
 
     private onTouchStart(event: cc.Event.EventTouch) {
-        let globalPos = this.node.parent.convertToNodeSpaceAR(event.touch.getLocation());
+        let globalPos = this._node.convertToNodeSpaceAR(event.touch.getLocation());
 
         if (this.node.getBoundingBox().contains(globalPos)) {
             let pos = this.node.convertToNodeSpaceAR(event.touch.getLocation());

@@ -180,7 +180,7 @@
       "array": [
         0,
         0,
-        350.7836056602857,
+        351.7607059339718,
         0,
         0,
         0,
@@ -2545,8 +2545,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -62.39999999999999,
-        -39.20000000000002,
+        -75.2,
+        -65.6,
         0,
         0,
         0,
@@ -2986,10 +2986,10 @@
       "__id__": 2
     },
     "_alignFlags": 12,
-    "_left": 0.10000000000000003,
+    "_left": 0.05,
     "_right": 0,
     "_top": 0,
-    "_bottom": 0.19999999999999996,
+    "_bottom": 0.1,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
     "_isAbsLeft": false,
@@ -3553,7 +3553,7 @@
     "gameStartAudio": {
       "__uuid__": "1461613b-f040-45ca-9e17-504cd34e4e03"
     },
-    "enableAudio": true,
+    "enableAudio": false,
     "_id": "b6CoEwZwBHXpTGb+3hMzQQ"
   },
   {
