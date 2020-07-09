@@ -1,34 +1,26 @@
 import BaseTank from "./BaseTank"
 import { Dir } from "./Globals"
 import MapLayer from "./MapLayer";
-import Game from "./Game";
 import AudioMng from "../AudioMng";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class EnemyTank extends BaseTank {
-    curDistance: number;
-    maxDistance: number;
-
-    constructor() {
-        super();
-        
-        this.curDistance = 0;
-        this.maxDistance = 100;
-    }
+    private readonly _maxDistance: number = 100;
+    private _curDistance: number = 0;
 
     update(dt: number) {
         if (!this.autoMoving) return;
 
-        let realStep = (this.step + 35) * dt;
+        let realStep = (this.level + 35) * dt;
         this._autoMoving(realStep);
     }
 
     init(pos: cc.Vec3) {
         this.mapLayer = cc.find("/Canvas/GameLayer/MapLayer").getComponent(MapLayer);
 
-        this.curDistance = 0;
+        this._curDistance = 0;
         this.level = Math.ceil(Math.random() * 4);
 
         if (this.level == 4) {
@@ -38,13 +30,13 @@ export default class EnemyTank extends BaseTank {
         }
 
         this.node.position = pos;
-
+    
         this.getComponent(cc.Animation).play("star");
 
         // 控制方向
         this.schedule(() => {
-            if (this.curDistance >= this.maxDistance) {
-                this.curDistance = 0;
+            if (this._curDistance >= this._maxDistance) {
+                this._curDistance = 0;
                 this.changeDir();
             }
         }, 0.1);
@@ -68,7 +60,6 @@ export default class EnemyTank extends BaseTank {
         if (this.dir == dir)
             return;
 
-
         let oldPosition = this.node.position;
         // 调整位置为8的整数倍
         this._adjustPosition();
@@ -78,10 +69,11 @@ export default class EnemyTank extends BaseTank {
             this.node.position = oldPosition;
 
             // 变换方向
-            this.curDistance = this.maxDistance;
+            this._curDistance = this._maxDistance;
         }
 
         this.dir = dir;
+        this.node.angle = -90 * this.dir;
     }
 
     changeDir() {
@@ -101,14 +93,14 @@ export default class EnemyTank extends BaseTank {
     }
 
     shoot() {
-        this.mapLayer.createBullet(this.dir, this.node.position, this.step * 2, this);
+        this.mapLayer.createBullet(this.dir, this.node.position, this.level, this);
     }
 
     playAnimation() {
-        let animation = "moving_" + this.dir + "_" + this.level;
+        let animation = "moving_0_" + this.level;
 
         if (this.level == 4) {
-            animation = "moving_" + this.dir + "_" + this.level + "_" + (3 - this.blood);
+            animation = "moving_0_" + this.level + "_" + (3 - this.blood);
         }
 
         this.getComponent(cc.Animation).play(animation);
@@ -164,14 +156,14 @@ export default class EnemyTank extends BaseTank {
                 break;
         }
 
-        this.curDistance += realStep;
+        this._curDistance += realStep;
 
         // 如果产生碰撞，则回到之前的位置
         if (this._isCollisionWithMap() || this._isCollisionWithBlock() || this._isCollisionWithTank()) {
             this.node.position = oldPosition;
 
             // 变换方向
-            this.curDistance = this.maxDistance;
+            this._curDistance = this._maxDistance;
         }
 
     }

@@ -18,7 +18,6 @@ export default class UpdateInformations extends cc.Component {
     }
 
     public init(level: number) {
-
         // 清理子节点
         this.enemiesIcon.removeAllChildren(true);
 
@@ -26,7 +25,7 @@ export default class UpdateInformations extends cc.Component {
         const row = Globals.ENEMIES_COUNT / column;
 
         // 添加坦克图标
-        for (let i = 0; i != row; i++) {
+        for (let i = 0; i != row - 1; i++) {
             for (let j = 0; j != column; j++) {
                 let node = cc.instantiate(this.enemyIcon);
                 node.name = "icon";

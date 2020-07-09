@@ -38,7 +38,7 @@ export default class PlayerTank extends BaseTank {
         if (!this.canMove)
             return;
 
-        this.mapLayer.createBullet(this.dir, this.node.position, this.step * 2, this);
+        this.mapLayer.createBullet(this.dir, this.node.position, (this.level + 1) * 2, this);
     }
 
     public disBlood() {
@@ -100,28 +100,33 @@ export default class PlayerTank extends BaseTank {
         cc.find("/Canvas/GameLayer/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
     }
 
-    protected onLoad() {
+    public init() {
         this.blood = 3;
         this.isEnemy = false;
-        this.mapLayer = this.node.parent.getComponent(MapLayer);
+        this.mapLayer = cc.find("/Canvas/GameLayer/MapLayer").getComponent(MapLayer);
 
         // TODO
         this.bulletCount = 2;
-    }
 
-    protected onEnable() {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
 
         this.reset();
     }
 
-    protected onDisable() {
-        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
-        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
+    // protected onEnable() {
+    //     cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
+    //     cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
 
-        this.canMove = false;
-    }
+    //     this.reset();
+    // }
+
+    // protected onDisable() {
+    //     cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
+    //     cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
+
+    //     this.canMove = false;
+    // }
 
     // 播放完star动画后调用
     protected afterStar() {
@@ -147,7 +152,7 @@ export default class PlayerTank extends BaseTank {
             return;
 
         if (this.autoMoving) {
-            let realStep = this.step * 40 * dt;
+            let realStep = (this.level + 1) * 40 * dt;
             this._autoMoving(realStep);
         }
     }
@@ -193,7 +198,8 @@ export default class PlayerTank extends BaseTank {
     }
 
     private _playMovingAnimation() {
-        this._movingAnimation = "moving_" + this.dir + "_" + this.level;
+        // TODO
+        this._movingAnimation = "moving";
         this.getComponent(cc.Animation).play(this._movingAnimation);
     }
 
@@ -216,6 +222,7 @@ export default class PlayerTank extends BaseTank {
         }
 
         this.dir = dir;
+        this.node.angle = -90 * this.dir;
 
         // 产生贴图
         this._playMovingAnimation();

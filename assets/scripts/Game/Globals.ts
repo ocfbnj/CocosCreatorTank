@@ -16,4 +16,5 @@ export const Globals = {
     ENEMY1: cc.v2(8, 200),
     ENEMY2: cc.v2(104, 200),
     ENEMY3: cc.v2(200, 200),
+    PLAYER1: cc.v2(80, 8)
 };

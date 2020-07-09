@@ -6,10 +6,10 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class BlockCamp extends cc.Component {
     @property(cc.SpriteFrame)
-    private _destoryed: cc.SpriteFrame = null;
+    private destoryed: cc.SpriteFrame = null;
 
     public tryDestory() {
-        this.getComponent(cc.Sprite).spriteFrame = this._destoryed;
+        this.getComponent(cc.Sprite).spriteFrame = this.destoryed;
 
         // 播放爆炸音效
         cc.find("/Game/AudioMng").getComponent(AudioMng).playAudio("camp_bomb");
