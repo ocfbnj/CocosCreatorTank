@@ -1,7 +1,7 @@
 {
   "title": "CocosTank",
   "packageName": "org.cocos2d.demo",
-  "startScene": "33b91d94-d2e2-4117-94db-b200c8c2e451",
+  "startScene": "c2b2811f-ab9c-417b-bb98-bc203fb84c3f",
   "excludeScenes": [],
   "includeSDKBox": false,
   "orientation": {
@@ -21,15 +21,24 @@
   "zipCompressJs": true,
   "fb-instant-games": {},
   "android": {
+    "REMOTE_SERVER_ROOT": "",
     "packageName": "org.cc.tank"
   },
   "ios": {
+    "REMOTE_SERVER_ROOT": "",
     "packageName": "org.cocos2d.demo"
   },
   "mac": {
-    "packageName": "org.cocos2d.demo"
+    "REMOTE_SERVER_ROOT": "",
+    "height": 720,
+    "packageName": "org.cocos2d.demo",
+    "width": 1280
   },
-  "win32": {},
+  "win32": {
+    "REMOTE_SERVER_ROOT": "",
+    "height": 720,
+    "width": 1280
+  },
   "android-instant": {
     "REMOTE_SERVER_ROOT": "",
     "host": "",
@@ -39,5 +48,9 @@
     "scheme": "https",
     "skipRecord": false
   },
-  "appBundle": false
+  "appBundle": false,
+  "mainCompressionType": "default",
+  "mainIsRemote": false,
+  "nativeMd5Cache": true,
+  "includeAnySDK": false
 }

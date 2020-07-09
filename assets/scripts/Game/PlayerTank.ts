@@ -3,6 +3,7 @@ import { Dir } from "./Globals";
 import MapLayer from "./MapLayer";
 import UpdateInformations from "./UpdateInformations";
 import Game from "./Game";
+import AudioMng from "../AudioMng";
 
 const { ccclass, property } = cc._decorator;
 
@@ -18,7 +19,7 @@ export default class PlayerTank extends BaseTank {
         if (!this.canMove) return;
 
         if (!this.autoMoving)
-            this.mapLayer.game.getComponent(Game).playAudio("player_move", true);
+            cc.find("/Game/AudioMng").getComponent(AudioMng).playAudio("player_move", true);
 
         this._setDir(dir);
         this._playMovingAnimation();
@@ -29,7 +30,7 @@ export default class PlayerTank extends BaseTank {
         if (!this.canMove) return;
 
         this.autoMoving = false;
-        this.mapLayer.game.getComponent(Game).stopAudio("player_move");
+        cc.find("/Game/AudioMng").getComponent(AudioMng).stopAudio("player_move");
         this._stopMovingAnimation();
     }
 
@@ -47,7 +48,7 @@ export default class PlayerTank extends BaseTank {
         this.blood--;
 
         if (this.blood >= 0) {
-            this.mapLayer.game.getComponent(Game).playAudio("tank_bomb", false);
+            cc.find("/Game/AudioMng").getComponent(AudioMng).playAudio("tank_bomb", false);
             this.canMove = false;
             this._stopMovingAnimation();
         }
@@ -62,7 +63,7 @@ export default class PlayerTank extends BaseTank {
 
         // 更新剩余生命值
         if (this.blood > 0)
-            cc.find("/Canvas/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
+            cc.find("/Canvas/GameLayer/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
     }
 
     /**
@@ -70,10 +71,10 @@ export default class PlayerTank extends BaseTank {
      */
     public gameOver() {
         this.node.active = false;
-        this.mapLayer.game.getComponent(Game).stopAudio("player_move");
+        cc.find("/Game/AudioMng").getComponent(AudioMng).stopAudio("player_move");
         let visableSize = cc.view.getVisibleSize();
 
-        let gameOverNode = cc.find("/Canvas/gameover_left");
+        let gameOverNode = cc.find("/Canvas/External/gameover_left");
         gameOverNode.active = true;
         gameOverNode.setPosition(-visableSize.width / 2 - gameOverNode.width / 2, -94);
 
@@ -83,7 +84,7 @@ export default class PlayerTank extends BaseTank {
             .delay(1)
             .call(() => {
                 // 播放上升动画
-                cc.find("/Canvas").getComponent(Game).gameOverUp();
+                cc.find("/Game").getComponent(Game).gameOver();
             })
             .start();
     }
@@ -96,7 +97,7 @@ export default class PlayerTank extends BaseTank {
         this._setDir(Dir.UP);
         this.node.setPosition(80, 8);
         this.getComponent(cc.Animation).play("star");
-        cc.find("/Canvas/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
+        cc.find("/Canvas/GameLayer/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
     }
 
     protected onLoad() {

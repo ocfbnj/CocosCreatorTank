@@ -2,6 +2,7 @@ import BaseTank from "./BaseTank"
 import { Dir } from "./Globals"
 import MapLayer from "./MapLayer";
 import Game from "./Game";
+import AudioMng from "../AudioMng";
 
 const { ccclass, property } = cc._decorator;
 
@@ -25,7 +26,7 @@ export default class EnemyTank extends BaseTank {
     }
 
     init(pos: cc.Vec3) {
-        this.mapLayer = cc.find("/Canvas/MapLayer").getComponent(MapLayer);
+        this.mapLayer = cc.find("/Canvas/GameLayer/MapLayer").getComponent(MapLayer);
 
         this.curDistance = 0;
         this.level = Math.ceil(Math.random() * 4);
@@ -123,13 +124,13 @@ export default class EnemyTank extends BaseTank {
 
         if (--this.blood == 0) {
             this.unscheduleAllCallbacks();
-            this.mapLayer.game.getComponent(Game).playAudio("tank_bomb", false);
+            cc.find("/Game/AudioMng").getComponent(AudioMng).playAudio("tank_bomb", false);
 
             this.stopAnimation();
 
             this.getComponent(cc.Animation).play("blast");
         } else {
-            this.mapLayer.game.getComponent(Game).playAudio("bin", false);
+            cc.find("/Game/AudioMng").getComponent(AudioMng).playAudio("bin", false);
 
             // 刷新动画
             this.playAnimation();

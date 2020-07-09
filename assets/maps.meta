@@ -1,8 +1,8 @@
 {
   "ver": "1.1.2",
-  "uuid": "82b99417-a124-42f1-858a-c6eb5867aff4",
-  "isBundle": false,
-  "bundleName": "scenes",
+  "uuid": "4fdb67e4-a430-4dd7-b290-18affd687e14",
+  "isBundle": true,
+  "bundleName": "maps",
   "priority": 1,
   "compressionType": {},
   "optimizeHotUpdate": {},

@@ -7,16 +7,18 @@ const { ccclass, property } = cc._decorator;
 export default class TouchControl extends cc.Component {
     @property([cc.Node])
     private buttons: cc.Node[] = [];
-
     @property(PlayerTank)
     private player: PlayerTank = null;
 
     protected onLoad() {
-        // 设置位置
-        let size = cc.view.getVisibleSize();
+        // if (cc.sys.isMobile) {
+        //     this.node.active = true;
+        // } else {
+        //     this.node.active = false;
+        // }
 
-        this.node.x = size.width * 0.05 + this.node.width * 0.5 - size.width * 0.5;
-        this.node.y = size.height * 0.1 + this.node.height * 0.5 - size.height * 0.5;
+        // 默认激活，调试用 TODO
+        this.node.active = true;
     }
 
     protected onEnable() {

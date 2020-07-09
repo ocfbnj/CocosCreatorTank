@@ -5,51 +5,40 @@ import EnemyTank from "./EnemyTank";
 import BlockWall from "./BlockWall";
 import BaseTank from "./BaseTank";
 import UpdateInformations from "./UpdateInformations";
+import AudioMng from "../AudioMng";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class MapLayer extends cc.Component {
-
-    @property(cc.Node)
-    public game: cc.Node = null;
-
     @property(cc.Node)
     public player: cc.Node = null;
-
     @property(cc.Node)
     public blocks: cc.Node = null;
-
     @property(cc.Node)
     public enemiesBullets: cc.Node = null;
-
     @property(cc.Node)
     public playerBullets: cc.Node = null;
-
     @property(cc.Node)
     public enemies: cc.Node = null;
 
     @property(cc.Prefab)
     private blockWall: cc.Prefab = null;
-
     @property(cc.Prefab)
     private blockStone: cc.Prefab = null;
-
     @property(cc.Prefab)
     private blockForest: cc.Prefab = null;
-
     @property(cc.Prefab)
     private blockIce: cc.Prefab = null;
-
     @property(cc.Prefab)
     private blockRiver: cc.Prefab = null;
-
     @property(cc.Prefab)
     private enemy: cc.Prefab = null;
-
     @property(cc.Prefab)
     private bullet: cc.Prefab = null;
 
+    private _game: Game;
+    private _audioMng: AudioMng;
     private _bulletPool: cc.NodePool;
     private _enemiesPool: cc.NodePool;
     private _remainEnemiesCount: number;
@@ -69,7 +58,7 @@ export default class MapLayer extends cc.Component {
         if (tank.isEnemy) {
             bullet.parent = this.enemiesBullets;
         } else {
-            this.game.getComponent(Game).playAudio("shoot", false);
+            this._audioMng.playAudio("shoot", false);
             bullet.parent = this.playerBullets;
         }
 
@@ -84,14 +73,9 @@ export default class MapLayer extends cc.Component {
         this._enemiesPool.put(enemy);
     }
 
-    protected onLoad() {
-        this._bulletPool = new cc.NodePool();
-        this._enemiesPool = new cc.NodePool();
-    }
-    
-    protected onEnable() {
+    public init() {
         this._remainEnemiesCount = Globals.ENEMIES_COUNT;
-        
+
         // 清理子节点
         this._cleanChildNode();
 
@@ -112,6 +96,14 @@ export default class MapLayer extends cc.Component {
                 this.scheduleOnce(this.toNextStage, 2);
             }
         }, 0.1);
+    }
+
+    protected onLoad() {
+        this._game = cc.find("/Game").getComponent(Game);
+        this._audioMng = cc.find("/Game/AudioMng").getComponent(AudioMng);
+
+        this._bulletPool = new cc.NodePool();
+        this._enemiesPool = new cc.NodePool();
     }
 
     private spawnNewEnemy() {
@@ -159,70 +151,70 @@ export default class MapLayer extends cc.Component {
         enemy.getComponent(EnemyTank).init(new cc.Vec3(pos.x, pos.y));
 
         // 更新信息区域
-        cc.find("/Canvas/Informations").getComponent(UpdateInformations).deleteOneIcon();
+        cc.find("/Canvas/GameLayer/Informations").getComponent(UpdateInformations).deleteOneIcon();
 
         this._remainEnemiesCount--;
     }
 
     private toNextStage() {
-        let game = cc.find("Canvas").getComponent(Game);
-        game.level++;
-
-        game.init();
+        this._game.level++;
+        this._game.gameStart();
     }
 
     private _loadMap() {
         let self = this;
 
-        cc.resources.load("maps/" + this.game.getComponent(Game).level, cc.TextAsset, function (err, file) {
-            let data = (file as cc.TextAsset).text;
-            let index = 0;
+        cc.assetManager.loadBundle("maps", (err: Error, bundle: cc.AssetManager.Bundle) => {
+            bundle.load(this._game.level.toString(), cc.TextAsset, function (err: Error, file: cc.TextAsset) {
+                let data = file.text;
+                let index = 0;
 
-            for (let i = 0; i != 26; i++) {
-                for (let j = 0; j != 26; j++) {
-                    let block: cc.Node;
+                for (let i = 0; i != 26; i++) {
+                    for (let j = 0; j != 26; j++) {
+                        let block: cc.Node;
 
-                    switch (data[index++]) {
-                        case '3':
-                            block = cc.instantiate(self.blockWall);
-                            block.name = "block_wall";
-                            block.getComponent(BlockWall).init();
-                            break;
-                        case '5':
-                            block = cc.instantiate(self.blockStone);
-                            block.name = "block_stone";
-                            break;
-                        case '1':
-                            block = cc.instantiate(self.blockForest);
-                            block.zIndex = cc.macro.MAX_ZINDEX;
-                            break;
-                        case '2':
-                            block = cc.instantiate(self.blockIce);
-                            block.zIndex = self.player.zIndex - 1;
-                            break;
-                        case '4':
-                            block = cc.instantiate(self.blockRiver);
-                            block.name = "block_river";
-                            block.getComponent(cc.Animation).play("river");
-                            break;
-                        default:
-                            break;
-                    }
+                        switch (data[index++]) {
+                            case '3':
+                                block = cc.instantiate(self.blockWall);
+                                block.name = "block_wall";
+                                block.getComponent(BlockWall).init();
+                                break;
+                            case '5':
+                                block = cc.instantiate(self.blockStone);
+                                block.name = "block_stone";
+                                break;
+                            case '1':
+                                block = cc.instantiate(self.blockForest);
+                                block.zIndex = cc.macro.MAX_ZINDEX;
+                                break;
+                            case '2':
+                                block = cc.instantiate(self.blockIce);
+                                block.zIndex = self.player.zIndex - 1;
+                                break;
+                            case '4':
+                                block = cc.instantiate(self.blockRiver);
+                                block.name = "block_river";
+                                block.getComponent(cc.Animation).play("river");
+                                break;
+                            default:
+                                break;
+                        }
 
-                    if (block) {
-                        block.parent = self.blocks;
-                        block.setAnchorPoint(0, 0);
-                        block.setPosition(j * Globals.BLOCK_SIZE, (25 - i) * Globals.BLOCK_SIZE);
+                        if (block) {
+                            block.parent = self.blocks;
+                            block.setAnchorPoint(0, 0);
+                            block.setPosition(j * Globals.BLOCK_SIZE, (25 - i) * Globals.BLOCK_SIZE);
+                        }
                     }
                 }
-            }
+            });
         });
     }
 
     private _canSpawnTank(pos: { x: number; y: number; }) {
         let box = new cc.Rect(
-            pos.x - Globals.TANK_SIZE / 2 - 1,
-            pos.y - Globals.TANK_SIZE / 2 - 1,
+            pos.x - Globals.TANK_SIZE / 2,
+            pos.y - Globals.TANK_SIZE / 2,
             Globals.TANK_SIZE,
             Globals.TANK_SIZE
         );

@@ -1,8 +1,8 @@
 {
   "ver": "1.1.2",
-  "uuid": "82b99417-a124-42f1-858a-c6eb5867aff4",
+  "uuid": "6880da34-2c3d-4603-a6a2-33e9bcb8debd",
   "isBundle": false,
-  "bundleName": "scenes",
+  "bundleName": "",
   "priority": 1,
   "compressionType": {},
   "optimizeHotUpdate": {},
