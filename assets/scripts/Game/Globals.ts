@@ -5,6 +5,10 @@ export enum Dir {
     DOWN = 3
 };
 
+export enum GameMode {
+    ONE, MORE
+};
+
 export const Globals = {
     BLOCK_SIZE: 8,
     TANK_SIZE: 16,

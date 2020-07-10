@@ -1,6 +1,7 @@
 import UpdateInformations from "./UpdateInformations";
 import MapLayer from "./MapLayer";
 import AudioMng from "../AudioMng";
+import { GameMode } from "./Globals";
 
 const { ccclass, property } = cc._decorator;
 
@@ -15,6 +16,7 @@ export default class Game extends cc.Component {
     @property(cc.Prefab)
     private black: cc.Prefab = null;
 
+    public gameMode: GameMode = GameMode.ONE;
 
     public get level(): number {
         return this._level;
