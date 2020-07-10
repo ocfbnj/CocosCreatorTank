@@ -4,7 +4,6 @@ import MapLayer from "./MapLayer";
 import EnemyTank from "./EnemyTank";
 import BlockWall from "./BlockWall";
 import BlockCamp from "./BlockCamp";
-import Game from "./Game";
 import PlayerTank from "./PlayerTank";
 import AudioMng from "../AudioMng";
 

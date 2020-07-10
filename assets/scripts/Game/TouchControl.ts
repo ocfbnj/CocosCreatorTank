@@ -7,9 +7,8 @@ const { ccclass, property } = cc._decorator;
 export default class TouchControl extends cc.Component {
     @property([cc.Node])
     private buttons: cc.Node[] = [];
-    @property(PlayerTank)
-    private player: PlayerTank = null;
-    
+
+    private _player: PlayerTank = null;
     private _node: cc.Node = null;
 
     protected onLoad() {
@@ -20,6 +19,8 @@ export default class TouchControl extends cc.Component {
         }
 
         this._node = cc.find("/Canvas");
+
+        this._player = cc.find("/Canvas/GameLayer/MapLayer/players").children[0].getComponent(PlayerTank);
     }
 
     protected onEnable() {
@@ -39,16 +40,16 @@ export default class TouchControl extends cc.Component {
             let pos = this.node.convertToNodeSpaceAR(event.touch.getLocation());
 
             if (this.buttons[0].getBoundingBox().contains(pos)) {
-                this.player.control(Dir.LEFT);
+                this._player.control(Dir.LEFT);
             } else if (this.buttons[1].getBoundingBox().contains(pos)) {
-                this.player.control(Dir.UP);
+                this._player.control(Dir.UP);
             } else if (this.buttons[2].getBoundingBox().contains(pos)) {
-                this.player.control(Dir.RIGHT);
+                this._player.control(Dir.RIGHT);
             } else if (this.buttons[3].getBoundingBox().contains(pos)) {
-                this.player.control(Dir.DOWN);
+                this._player.control(Dir.DOWN);
             }
         } else {
-            this.player.shoot();
+            this._player.shoot();
         }
     }
 
@@ -60,7 +61,7 @@ export default class TouchControl extends cc.Component {
             this.buttons[2].getBoundingBox().contains(pos) ||
             this.buttons[3].getBoundingBox().contains(pos)) {
 
-            this.player.controlStop();
+            this._player.controlStop();
         }
     }
 

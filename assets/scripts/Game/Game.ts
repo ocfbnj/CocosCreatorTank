@@ -6,10 +6,24 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Game extends cc.Component {
-    @property(cc.Integer)
-    public level: number = 1;                      // 关卡数
+    @property({
+        type: cc.Integer,
+        min: 1,
+        max: 35
+    })
+    public _level: number = 1;                      // 关卡数
     @property(cc.Prefab)
     private black: cc.Prefab = null;
+
+
+    public get level(): number {
+        return this._level;
+    }
+
+    public set level(v: number) {
+        if (v > 35) v -= 35;
+        this._level = v;
+    }
 
     public gameStart() {
         // 播放开始游戏音效
@@ -105,7 +119,7 @@ export default class Game extends cc.Component {
 
         // 激活Stage
         stageArea.active = true;
-        stageArea.getChildByName("level").getComponent(cc.Label).string = this.level.toString();
+        stageArea.getChildByName("level").getComponent(cc.Label).string = this._level.toString();
 
         // 一秒后切换到游戏界面
         this.scheduleOnce(() => {
@@ -120,7 +134,7 @@ export default class Game extends cc.Component {
             gameLayer.active = true;
 
             // 初始化信息区域
-            informations.init(this.level);
+            informations.init(this._level);
 
             // 初始化地图
             mapLayer.init();

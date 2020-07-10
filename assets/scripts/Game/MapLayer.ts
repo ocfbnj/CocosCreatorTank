@@ -176,7 +176,7 @@ export default class MapLayer extends cc.Component {
     }
 
     private toNextStage() {
-        this._game.level++;
+        this._game.level = this._game.level + 1;
         this._game.gameStart();
     }
 
