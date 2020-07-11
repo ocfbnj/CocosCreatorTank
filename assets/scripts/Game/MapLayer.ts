@@ -1,5 +1,5 @@
 import Game from "./Game";
-import { Globals, Dir } from "./Globals";
+import { Globals, Dir } from "../Globals";
 import Bullet from "./Bullet";
 import EnemyTank from "./EnemyTank";
 import BlockWall from "./BlockWall";

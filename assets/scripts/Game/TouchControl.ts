@@ -1,5 +1,5 @@
 import PlayerTank from "./PlayerTank";
-import { Dir } from "./Globals";
+import { Dir } from "../Globals";
 
 const { ccclass, property } = cc._decorator;
 

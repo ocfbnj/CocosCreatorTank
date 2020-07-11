@@ -1,5 +1,5 @@
 import BaseTank from "./BaseTank"
-import { Dir } from "./Globals"
+import { Dir } from "../Globals"
 import MapLayer from "./MapLayer";
 import AudioMng from "../AudioMng";
 
