@@ -36,7 +36,9 @@ export default class MapLayer extends cc.Component {
     @property(cc.Prefab)
     private blockRiver: cc.Prefab = null;
     @property(cc.Prefab)
-    private player: cc.Prefab = null;
+    private player1: cc.Prefab = null;
+    @property(cc.Prefab)
+    private player2: cc.Prefab = null;
     @property(cc.Prefab)
     private enemy: cc.Prefab = null;
     @property(cc.Prefab)
@@ -152,9 +154,9 @@ export default class MapLayer extends cc.Component {
     }
 
     private spawnPlayer() {
-        let player1 = cc.instantiate(this.player);
-        player1.parent = this.players;
-        player1.getComponent(PlayerTank).init();
+        let player = cc.instantiate(this.player1);
+        player.parent = this.players;
+        player.getComponent(PlayerTank).init();
     }
 
     private createEnemy(pos: cc.Vec2) {
