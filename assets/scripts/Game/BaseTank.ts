@@ -1,4 +1,4 @@
-import { Globals, Dir } from "./Globals";
+import { Globals, Dir } from "../Globals";
 import { adjustNumber } from "./Utils";
 import MapLayer from "./MapLayer";
 

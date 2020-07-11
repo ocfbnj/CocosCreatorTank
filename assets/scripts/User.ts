@@ -1,5 +1,5 @@
 import Game from "./Game/Game";
-import { GameMode } from "./Game/Globals";
+import { GameMode, Globals } from "./Globals";
 
 const { ccclass, property } = cc._decorator;
 
@@ -16,7 +16,7 @@ export default class User extends cc.Component {
         /**
          * 登录
          */
-        this.wsUser = new WebSocket("ws://118.178.91.76:8080/", "user");
+        this.wsUser = new WebSocket(Globals.USER_SERVER, "user");
 
         this.wsUser.onopen = (event) => {
             console.log("用户服务器被打开");

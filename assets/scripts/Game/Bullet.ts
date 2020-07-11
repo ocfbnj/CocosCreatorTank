@@ -1,4 +1,4 @@
-import { Globals, Dir } from "./Globals";
+import { Globals, Dir } from "../Globals";
 import BaseTank from "./BaseTank";
 import MapLayer from "./MapLayer";
 import EnemyTank from "./EnemyTank";

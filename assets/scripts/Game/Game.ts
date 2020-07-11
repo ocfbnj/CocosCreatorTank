@@ -1,7 +1,7 @@
 import UpdateInformations from "./UpdateInformations";
 import MapLayer from "./MapLayer";
 import AudioMng from "../AudioMng";
-import { GameMode } from "./Globals";
+import { GameMode } from "../Globals";
 
 const { ccclass, property } = cc._decorator;
 
