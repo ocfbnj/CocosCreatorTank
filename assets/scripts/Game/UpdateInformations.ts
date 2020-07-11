@@ -1,4 +1,4 @@
-import { Globals } from "./Globals";
+import { Globals } from "../Globals";
 
 const { ccclass, property } = cc._decorator;
 

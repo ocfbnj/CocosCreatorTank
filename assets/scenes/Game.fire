@@ -180,7 +180,7 @@
       "array": [
         0,
         0,
-        352.52646592800306,
+        348.8909052510677,
         0,
         0,
         0,
@@ -2768,7 +2768,6 @@
         "__id__": 56
       }
     ],
-    "player": null,
     "_id": "3eZx/yeTxHx7eqHkUaFQXr"
   },
   {
@@ -3362,7 +3361,7 @@
       "__id__": 69
     },
     "_enabled": true,
-    "level": 1,
+    "_level": 1,
     "black": {
       "__uuid__": "dc8cd331-c8a0-4d6f-ad3f-be444beb47b2"
     },
