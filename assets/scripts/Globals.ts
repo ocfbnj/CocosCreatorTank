@@ -9,6 +9,11 @@ export enum GameMode {
     ONE, MORE
 };
 
+let server = "118.178.91.76";
+if (CC_DEBUG) {
+    server = "127.0.0.1"
+}
+
 export const Globals = {
     BLOCK_SIZE: 8,
     TANK_SIZE: 16,
@@ -22,6 +27,6 @@ export const Globals = {
     ENEMY3: cc.v2(200, 200),
     PLAYER1: cc.v2(80, 8),
 
-    USER_SERVER: "ws://118.178.91.76:8080/",
-    LOGIC_SERVER: "ws://118.178.91.76:8081/"
+    USER_SERVER: `ws://${server}:8080/`,
+    LOGIC_SERVER: `ws://${server}:8081/`
 };

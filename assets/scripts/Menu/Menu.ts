@@ -26,5 +26,11 @@ export default class Menu extends cc.Component {
         if (this.user.id != -1) {
             cc.find("/Canvas/user_name").getComponent(cc.Label).string = `游客${this.user.id}`;
         }
+
+        if (this.user.wsUser) {
+            this.user.wsUser.send(JSON.stringify({
+                "type": "get count"
+            }));
+        }
     }
 }
