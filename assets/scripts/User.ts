@@ -6,6 +6,7 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class User extends cc.Component {
     public id: number = -1;
+    public buddy_id: number = -1;
     public wsUser: WebSocket = null;
 
     protected onLoad() {
@@ -37,6 +38,8 @@ export default class User extends cc.Component {
                     if (node) node.getComponent(cc.Label).string = `当前在线人数: ${data["value"]}`;
                     break;
                 case "start game":
+                    this.buddy_id = data["buddy_id"];
+
                     cc.director.loadScene("Game", () => {
                         cc.find("/Game").getComponent(Game).gameMode = GameMode.MORE;
                     });
