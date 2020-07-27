@@ -1,6 +1,6 @@
 # CocosTank
 
-Cocos Creator版本：2.4.0
+Cocos Creator版本：2.4.1
 
 游戏预览：<http://118.178.91.76/>
 
