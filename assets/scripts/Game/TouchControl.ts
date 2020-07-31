@@ -6,34 +6,37 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class TouchControl extends cc.Component {
     @property([cc.Node])
-    private buttons: cc.Node[] = [];
+    buttons: cc.Node[] = [];
 
-    private _player: PlayerTank = null;
-    private _node: cc.Node = null;
+    _player: PlayerTank = null;
+    _node: cc.Node = null;
 
-    protected onLoad() {
+    onLoad() {
+        this._node = cc.find("/Canvas");
+        this._player = cc.find("/Canvas/GameLayer/MapLayer/players").children[0].getComponent(PlayerTank);
+
         if (cc.sys.isMobile) {
             this.node.active = true;
         } else {
             this.node.active = false;
         }
 
-        this._node = cc.find("/Canvas");
-
-        this._player = cc.find("/Canvas/GameLayer/MapLayer/players").children[0].getComponent(PlayerTank);
+        if (CC_DEBUG) {
+            this.node.active = true;
+        }
     }
 
-    protected onEnable() {
+    onEnable() {
         this._node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this, true);
         this._node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this, true);
     }
 
-    protected onDisable() {
+    onDisable() {
         this._node.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this, true);
         this._node.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this, true);
     }
 
-    private onTouchStart(event: cc.Event.EventTouch) {
+    onTouchStart(event: cc.Event.EventTouch) {
         let globalPos = this._node.convertToNodeSpaceAR(event.touch.getLocation());
 
         if (this.node.getBoundingBox().contains(globalPos)) {
@@ -53,7 +56,7 @@ export default class TouchControl extends cc.Component {
         }
     }
 
-    private onTouchEnd(event: cc.Event.EventTouch) {
+    onTouchEnd(event: cc.Event.EventTouch) {
         let pos = this.node.convertToNodeSpaceAR(event.touch.getLocation());
 
         if (this.buttons[0].getBoundingBox().contains(pos) ||

@@ -10,12 +10,12 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class PlayerTank extends BaseTank {
     @property(cc.Node)
-    private ring: cc.Node = null;
+    ring: cc.Node = null;
 
-    private _isInvincible: boolean;
-    private _movingAnimation: string;
+    _isInvincible: boolean;
+    _movingAnimation: string;
 
-    public control(dir: Dir) {
+    control(dir: Dir) {
         if (!this.canMove) return;
 
         if (!this.autoMoving)
@@ -26,7 +26,7 @@ export default class PlayerTank extends BaseTank {
         this.autoMoving = true;
     }
 
-    public controlStop() {
+    controlStop() {
         if (!this.canMove) return;
 
         this.autoMoving = false;
@@ -34,14 +34,14 @@ export default class PlayerTank extends BaseTank {
         this._stopMovingAnimation();
     }
 
-    public shoot() {
+    shoot() {
         if (!this.canMove)
             return;
 
         this.mapLayer.createBullet(this.dir, this.node.position, (this.level + 1) * 2, this);
     }
 
-    public disBlood() {
+    disBlood() {
         if (this._isInvincible)
             return;
 
@@ -69,7 +69,7 @@ export default class PlayerTank extends BaseTank {
     /**
      * 播放一个从左到右的game over动画，然后播放游戏失败流程动画
      */
-    public gameOver() {
+    gameOver() {
         this.node.active = false;
         cc.find("/Game/AudioMng").getComponent(AudioMng).stopAudio("player_move");
         let visableSize = cc.view.getVisibleSize();
@@ -92,7 +92,7 @@ export default class PlayerTank extends BaseTank {
     /**
      * 回到起始位置，并播放出生动画
      * */
-    public reset() {
+    reset() {
         this._isInvincible = true;
         this._setDir(Dir.UP);
         this.node.setPosition(80, 8);
@@ -100,7 +100,7 @@ export default class PlayerTank extends BaseTank {
         cc.find("/Canvas/GameLayer/Informations").getComponent(UpdateInformations).updatePlayerBlood(this.blood - 1);
     }
 
-    public init() {
+    init() {
         this.blood = 3;
         this.isEnemy = false;
         this.mapLayer = cc.find("/Canvas/GameLayer/MapLayer").getComponent(MapLayer);
@@ -157,7 +157,7 @@ export default class PlayerTank extends BaseTank {
         }
     }
 
-    private _onKeyDown(event: { keyCode: cc.macro.KEY; }) {
+    _onKeyDown(event: { keyCode: cc.macro.KEY; }) {
         if (!this.canMove)
             return;
 
@@ -181,7 +181,7 @@ export default class PlayerTank extends BaseTank {
         }
     }
 
-    private _onKeyUp(event: cc.Event.EventKeyboard) {
+    _onKeyUp(event: cc.Event.EventKeyboard) {
         if (!this.canMove)
             return;
 
@@ -197,17 +197,17 @@ export default class PlayerTank extends BaseTank {
         }
     }
 
-    private _playMovingAnimation() {
+    _playMovingAnimation() {
         // TODO
         this._movingAnimation = "moving";
         this.getComponent(cc.Animation).play(this._movingAnimation);
     }
 
-    private _stopMovingAnimation() {
+    _stopMovingAnimation() {
         this.getComponent(cc.Animation).stop(this._movingAnimation);
     }
 
-    private _setDir(dir: Dir) {
+    _setDir(dir: Dir) {
         if (this.dir == dir)
             return;
 
@@ -228,7 +228,7 @@ export default class PlayerTank extends BaseTank {
         this._playMovingAnimation();
     }
 
-    private _autoMoving(realStep) {
+    _autoMoving(realStep) {
         // 记录移动前的位置
         let oldPosition = this.node.position;
 

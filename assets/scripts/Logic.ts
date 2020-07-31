@@ -5,10 +5,10 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Logic extends cc.Component {
-    public id: number = -1;
-    public wsLogic: WebSocket = null;
+    id: number = -1;
+    wsLogic: WebSocket = null;
 
-    protected onLoad() {
+    onLoad() {
         cc.game.addPersistRootNode(this.node);
 
         cc.director.preloadScene("Game");
@@ -38,7 +38,7 @@ export default class Logic extends cc.Component {
                     break;
                 case "start game":
                     cc.director.loadScene("Game", () => {
-                        cc.find("/Game").getComponent(Game).gameMode = GameMode.MORE;
+                        cc.find("/Game").getComponent(Game)._gameMode = GameMode.MORE;
                     });
                 default:
                     break;

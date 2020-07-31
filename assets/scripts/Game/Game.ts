@@ -7,27 +7,28 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Game extends cc.Component {
+    @property(cc.Prefab)
+    black: cc.Prefab = null;
+    @property
+    _level: number = 1;
+    
+    _gameMode: GameMode = GameMode.ONE;
+
     @property({
         type: cc.Integer,
         min: 1,
         max: 35
     })
-    public _level: number = 1;                      // 关卡数
-    @property(cc.Prefab)
-    private black: cc.Prefab = null;
-
-    public gameMode: GameMode = GameMode.ONE;
-
-    public get level(): number {
+    get level(): number {
         return this._level;
     }
 
-    public set level(v: number) {
+    set level(v: number) {
         if (v > 35) v -= 35;
         this._level = v;
     }
 
-    public gameStart() {
+    gameStart() {
         // 播放开始游戏音效
         cc.find("/Game/AudioMng").getComponent(AudioMng).playAudio("game_start");
 
@@ -43,7 +44,7 @@ export default class Game extends cc.Component {
         this.showAnimation();
     }
 
-    public gameOver() {
+    gameOver() {
         let visableSize = cc.view.getVisibleSize();
 
         let gameOverNode = cc.find("/Canvas/External/gameover_up");
@@ -76,11 +77,11 @@ export default class Game extends cc.Component {
             .start();
     }
 
-    protected onLoad() {
+    onLoad() {
         this.gameStart();
     }
 
-    private showAnimation() {
+    showAnimation() {
         let visableSize = cc.view.getVisibleSize();
 
         // 展示动画
@@ -116,7 +117,7 @@ export default class Game extends cc.Component {
             .start();
     }
 
-    private showStage() {
+    showStage() {
         let stageArea = cc.find("/Canvas/StageArea");
 
         // 激活Stage

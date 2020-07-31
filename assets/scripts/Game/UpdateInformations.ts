@@ -5,19 +5,19 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class UpdateInformations extends cc.Component {
     @property(cc.Prefab)
-    private enemyIcon: cc.Prefab = null;
+    enemyIcon: cc.Prefab = null;
     @property(cc.Node)
-    private enemiesIcon: cc.Node = null;
+    enemiesIcon: cc.Node = null;
 
-    public deleteOneIcon() {
+    deleteOneIcon() {
         this.enemiesIcon.children[this.enemiesIcon.childrenCount - 1].destroy();
     }
 
-    public updatePlayerBlood(blood: number) {
+    updatePlayerBlood(blood: number) {
         this.node.getChildByName("player_blood").getComponent(cc.Label).string = blood.toString();
     }
 
-    public init(level: number) {
+    init(level: number) {
         // 清理子节点
         this.enemiesIcon.removeAllChildren(true);
 

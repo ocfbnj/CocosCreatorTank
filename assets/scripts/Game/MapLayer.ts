@@ -14,43 +14,43 @@ const { ccclass, property } = cc._decorator;
 export default class MapLayer extends cc.Component {
     // 节点
     @property(cc.Node)
-    public players: cc.Node = null;
+    players: cc.Node = null;
     @property(cc.Node)
-    public enemies: cc.Node = null;
+    enemies: cc.Node = null;
     @property(cc.Node)
-    public blocks: cc.Node = null;
+    blocks: cc.Node = null;
     @property(cc.Node)
-    public enemiesBullets: cc.Node = null;
+    enemiesBullets: cc.Node = null;
     @property(cc.Node)
-    public playerBullets: cc.Node = null;
+    playerBullets: cc.Node = null;
 
     // 预制资源
     @property(cc.Prefab)
-    private blockWall: cc.Prefab = null;
+    blockWall: cc.Prefab = null;
     @property(cc.Prefab)
-    private blockStone: cc.Prefab = null;
+    blockStone: cc.Prefab = null;
     @property(cc.Prefab)
-    private blockForest: cc.Prefab = null;
+    blockForest: cc.Prefab = null;
     @property(cc.Prefab)
-    private blockIce: cc.Prefab = null;
+    blockIce: cc.Prefab = null;
     @property(cc.Prefab)
-    private blockRiver: cc.Prefab = null;
+    blockRiver: cc.Prefab = null;
     @property(cc.Prefab)
-    private player1: cc.Prefab = null;
+    player1: cc.Prefab = null;
     @property(cc.Prefab)
-    private player2: cc.Prefab = null;
+    player2: cc.Prefab = null;
     @property(cc.Prefab)
-    private enemy: cc.Prefab = null;
+    enemy: cc.Prefab = null;
     @property(cc.Prefab)
-    private bullet: cc.Prefab = null;
+    bullet: cc.Prefab = null;
 
-    private _game: Game;
-    private _audioMng: AudioMng;
-    private _bulletPool: cc.NodePool;
-    private _enemiesPool: cc.NodePool;
-    private _remainEnemiesCount: number;
+    _game: Game;
+    _audioMng: AudioMng;
+    _bulletPool: cc.NodePool;
+    _enemiesPool: cc.NodePool;
+    _remainEnemiesCount: number;
 
-    public createBullet(dir: Dir, pos: cc.Vec3, step: number, tank: BaseTank) {
+    createBullet(dir: Dir, pos: cc.Vec3, step: number, tank: BaseTank) {
         if (tank.bulletCount <= 0)
             return;
 
@@ -72,15 +72,15 @@ export default class MapLayer extends cc.Component {
         bullet.getComponent(Bullet).init(dir, pos, step, tank);
     }
 
-    public destoryBullet(bullet: cc.Node, isEnemy: any) {
+    destoryBullet(bullet: cc.Node, isEnemy: any) {
         this._bulletPool.put(bullet)
     }
 
-    public destoryEnemy(enemy: cc.Node) {
+    destoryEnemy(enemy: cc.Node) {
         this._enemiesPool.put(enemy);
     }
 
-    public init() {
+    init() {
         this._remainEnemiesCount = Globals.ENEMIES_COUNT;
 
         // 清理子节点
@@ -110,7 +110,7 @@ export default class MapLayer extends cc.Component {
         }, 0.1);
     }
 
-    protected onLoad() {
+    onLoad() {
         this._game = cc.find("/Game").getComponent(Game);
         this._audioMng = cc.find("/Game/AudioMng").getComponent(AudioMng);
 
@@ -121,7 +121,7 @@ export default class MapLayer extends cc.Component {
         this.spawnPlayer();
     }
 
-    private spawnNewEnemy() {
+    spawnNewEnemy() {
         if (this.enemies.childrenCount >= 6)
             return;
 
@@ -153,13 +153,13 @@ export default class MapLayer extends cc.Component {
         }
     }
 
-    private spawnPlayer() {
+    spawnPlayer() {
         let player = cc.instantiate(this.player1);
         player.parent = this.players;
         player.getComponent(PlayerTank).init();
     }
 
-    private createEnemy(pos: cc.Vec2) {
+    createEnemy(pos: cc.Vec2) {
         let enemy: cc.Node;
 
         if (this._enemiesPool.size() > 0) {
@@ -177,12 +177,12 @@ export default class MapLayer extends cc.Component {
         this._remainEnemiesCount--;
     }
 
-    private toNextStage() {
+    toNextStage() {
         this._game.level = this._game.level + 1;
         this._game.gameStart();
     }
 
-    private _loadMap() {
+    _loadMap() {
         let self = this;
 
         cc.assetManager.loadBundle("maps", (err: Error, bundle: cc.AssetManager.Bundle) => {
@@ -206,11 +206,9 @@ export default class MapLayer extends cc.Component {
                                 break;
                             case '1':
                                 block = cc.instantiate(self.blockForest);
-                                block.zIndex = cc.macro.MAX_ZINDEX;
                                 break;
                             case '2':
                                 block = cc.instantiate(self.blockIce);
-                                block.zIndex = self.players.zIndex - 1;
                                 break;
                             case '4':
                                 block = cc.instantiate(self.blockRiver);
@@ -232,7 +230,7 @@ export default class MapLayer extends cc.Component {
         });
     }
 
-    private _canSpawnTank(pos: cc.Vec2) {
+    _canSpawnTank(pos: cc.Vec2) {
         let box = new cc.Rect(
             pos.x - Globals.TANK_SIZE / 2,
             pos.y - Globals.TANK_SIZE / 2,
@@ -256,7 +254,7 @@ export default class MapLayer extends cc.Component {
         return true;
     }
 
-    private _cleanChildNode() {
+    _cleanChildNode() {
         for (const enemy of this.enemies.children) {
             enemy.getComponent(EnemyTank).onDestroyed();
         }

@@ -3,24 +3,25 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class AudioMng extends cc.Component {
     @property({ type: cc.AudioClip })
-    private binAudio: cc.AudioClip = null;
+    binAudio: cc.AudioClip = null;
     @property({ type: cc.AudioClip })
-    private shootAudio: cc.AudioClip = null;
+    shootAudio: cc.AudioClip = null;
     @property({ type: cc.AudioClip })
-    private playerMoveAudio: cc.AudioClip = null;
+    playerMoveAudio: cc.AudioClip = null;
     @property({ type: cc.AudioClip })
-    private tankBombAudio: cc.AudioClip = null;
+    tankBombAudio: cc.AudioClip = null;
     @property({ type: cc.AudioClip })
-    private campBombAudio: cc.AudioClip = null;
+    campBombAudio: cc.AudioClip = null;
     @property({ type: cc.AudioClip })
-    private gameOverAudio: cc.AudioClip = null;
+    gameOverAudio: cc.AudioClip = null;
     @property({ type: cc.AudioClip })
-    private gameStartAudio: cc.AudioClip = null;
+    gameStartAudio: cc.AudioClip = null;
     @property(cc.Boolean)
-    private enableAudio: boolean = true;
-    private playerMoveID: number;
+    enableAudio: boolean = true;
+    
+    playerMoveID: number;
 
-    public playAudio(name: string, loop = false) {
+    playAudio(name: string, loop = false) {
         if (!this.enableAudio) return;
 
         if (name == "bin") {
@@ -41,7 +42,7 @@ export default class AudioMng extends cc.Component {
         }
     }
 
-    public stopAudio(name: string) {
+    stopAudio(name: string) {
         if (!this.enableAudio) return;
 
         if (name == "player_move") {

@@ -2,14 +2,14 @@ const { ccclass } = cc._decorator;
 
 @ccclass
 export default class BlockWall extends cc.Component {
-    public init() {
+    init() {
         let children = this.node.children;
         for (let i = 0; i < children.length; i++) {
             children[i].active = false;
         }
     }
 
-    public tryDestory(box: cc.Rect) {
+    tryDestory(box: cc.Rect) {
         let flag = false; // 是否与子弹发生碰撞
 
         let blacks = this.node.children;
@@ -39,7 +39,7 @@ export default class BlockWall extends cc.Component {
         return flag;
     }
 
-    private _isDestory() {
+    _isDestory() {
         let blacks = this.node.children;
 
         for (let i = 0; i != blacks.length; i++) {

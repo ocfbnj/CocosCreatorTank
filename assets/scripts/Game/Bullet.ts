@@ -12,16 +12,16 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class Bullet extends cc.Component {
     @property([cc.SpriteFrame])
-    private frames: cc.SpriteFrame[] = [];
+    frames: cc.SpriteFrame[] = [];
 
-    public tank: BaseTank;
-    public isEnemy: boolean;
-    private dir: number;
-    private step: number;
-    private stopMoving: boolean;
-    private mapLayer: MapLayer;
+    tank: BaseTank;
+    isEnemy: boolean;
+    dir: number;
+    step: number;
+    stopMoving: boolean;
+    mapLayer: MapLayer;
 
-    public init(dir: Dir, pos: cc.Vec3, step: number, tank: BaseTank) {
+    init(dir: Dir, pos: cc.Vec3, step: number, tank: BaseTank) {
         this.mapLayer = cc.find("/Canvas/GameLayer/MapLayer").getComponent(MapLayer);
         this.tank = tank;
         this.tank.bulletCount--;
@@ -52,7 +52,7 @@ export default class Bullet extends cc.Component {
         this.getComponent(cc.Sprite).spriteFrame = this.frames[this.dir];
     }
 
-    public onBulletDestory() {
+    onBulletDestory() {
         this.stopMoving = true;
         // TODO 删掉if
         if (this.tank)
@@ -92,11 +92,11 @@ export default class Bullet extends cc.Component {
         }
     }
 
-    private _playAnimation() {
+    _playAnimation() {
         this.getComponent(cc.Animation).play("bomb");
     }
 
-    private _isCollisionWithMap() {
+    _isCollisionWithMap() {
         let node = this.node;
         let offset = Globals.BULLET_SIZE / 2;
 
@@ -110,7 +110,7 @@ export default class Bullet extends cc.Component {
         return false;
     }
 
-    private _isCollisionWithBlock() {
+    _isCollisionWithBlock() {
         let count = 0;
         let blocks: cc.Node[] = this.mapLayer.blocks.children;
         let box = this.node.getBoundingBox();
@@ -157,7 +157,7 @@ export default class Bullet extends cc.Component {
         return count;
     }
 
-    private _isCollisionWithTank() {
+    _isCollisionWithTank() {
         let box = this.node.getBoundingBox();
         if (this.isEnemy) {
             let players = this.mapLayer.players.children;
@@ -182,7 +182,7 @@ export default class Bullet extends cc.Component {
         return false;
     }
 
-    private _isCollisionWithBullet() {
+    _isCollisionWithBullet() {
         let box = this.node.getBoundingBox();
         let bullets: cc.Node[];
 
