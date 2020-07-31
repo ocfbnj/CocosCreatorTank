@@ -7,8 +7,8 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class EnemyTank extends BaseTank {
-    private readonly _maxDistance: number = 100;
-    private _curDistance: number = 0;
+    readonly _maxDistance: number = 100;
+    _curDistance: number = 0;
 
     update(dt: number) {
         if (!this.autoMoving) return;

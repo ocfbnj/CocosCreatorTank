@@ -1,24 +1,12 @@
 import User from "../User";
 
-const { ccclass, property } = cc._decorator;
+const { ccclass } = cc._decorator;
 
 @ccclass
 export default class Menu extends cc.Component {
-    private user: User = null;
+    user: User = null;
 
-    public onBtnOne() {
-        cc.director.loadScene("Game");
-    }
-
-    public onBtnMore() {
-        // 自动匹配玩家
-        this.user.wsUser.send(JSON.stringify({
-            "type": "start game",
-            "id": this.user.id
-        }));
-    }
-
-    protected onLoad() {
+    onLoad() {
         cc.director.preloadScene("Game");
 
         this.user = cc.find("/User").getComponent(User);
@@ -32,5 +20,17 @@ export default class Menu extends cc.Component {
                 "type": "get count"
             }));
         }
+    }
+
+    onBtnOne() {
+        cc.director.loadScene("Game");
+    }
+
+    onBtnMore() {
+        // 自动匹配玩家
+        this.user.wsUser.send(JSON.stringify({
+            "type": "start game",
+            "id": this.user.id
+        }));
     }
 }

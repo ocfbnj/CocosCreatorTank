@@ -3,7 +3,6 @@
   "packageName": "org.cocos2d.demo",
   "startScene": "c2b2811f-ab9c-417b-bb98-bc203fb84c3f",
   "excludeScenes": [],
-  "includeSDKBox": false,
   "orientation": {
     "landscapeLeft": true,
     "landscapeRight": true,
@@ -13,16 +12,18 @@
   "webOrientation": "landscape",
   "inlineSpriteFrames": true,
   "inlineSpriteFrames_native": true,
-  "mergeStartScene": false,
-  "optimizeHotUpdate": true,
+  "mainCompressionType": "default",
+  "mainIsRemote": false,
+  "optimizeHotUpdate": false,
   "md5Cache": true,
+  "nativeMd5Cache": true,
   "encryptJs": true,
-  "xxteaKey": "9efc4e0f-d9c2-4b",
+  "xxteaKey": "80ca7762-83d4-45",
   "zipCompressJs": true,
   "fb-instant-games": {},
   "android": {
     "REMOTE_SERVER_ROOT": "",
-    "packageName": "org.cc.tank"
+    "packageName": "org.cocos2d.demo"
   },
   "ios": {
     "REMOTE_SERVER_ROOT": "",
@@ -48,9 +49,5 @@
     "scheme": "https",
     "skipRecord": false
   },
-  "appBundle": false,
-  "mainCompressionType": "default",
-  "mainIsRemote": false,
-  "nativeMd5Cache": true,
-  "includeAnySDK": false
+  "appBundle": false
 }

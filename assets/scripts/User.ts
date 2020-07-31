@@ -5,11 +5,11 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class User extends cc.Component {
-    public id: number = -1;
-    public buddy_id: number = -1;
-    public wsUser: WebSocket = null;
+    id: number = -1;
+    buddy_id: number = -1;
+    wsUser: WebSocket = null;
 
-    protected onLoad() {
+    onLoad() {
         cc.game.addPersistRootNode(this.node);
 
         cc.director.preloadScene("Game");
@@ -41,7 +41,7 @@ export default class User extends cc.Component {
                     this.buddy_id = data["buddy_id"];
 
                     cc.director.loadScene("Game", () => {
-                        cc.find("/Game").getComponent(Game).gameMode = GameMode.MORE;
+                        cc.find("/Game").getComponent(Game)._gameMode = GameMode.MORE;
                     });
                 default:
                     break;

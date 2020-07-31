@@ -6,16 +6,16 @@ const { ccclass } = cc._decorator;
 
 @ccclass
 export default class BaseTank extends cc.Component {
-    public bulletCount: number;
-    public isEnemy: boolean;
-    public level: number;
-    protected dir: Dir;
-    protected blood: number;
-    protected canMove: boolean;
-    protected autoMoving: boolean;
-    protected mapLayer: MapLayer;
+    bulletCount: number;
+    isEnemy: boolean;
+    level: number;
+    dir: Dir;
+    blood: number;
+    canMove: boolean;
+    autoMoving: boolean;
+    mapLayer: MapLayer;
 
-    public constructor() {
+    constructor() {
         super();
 
         this.level = 0;
@@ -27,7 +27,7 @@ export default class BaseTank extends cc.Component {
         this.bulletCount = 1;
     }
 
-    protected _isCollisionWithMap() {
+    _isCollisionWithMap() {
         let node = this.node;
         let offset = Globals.TANK_SIZE / 2;
 
@@ -39,7 +39,7 @@ export default class BaseTank extends cc.Component {
         return false;
     }
 
-    protected _isCollisionWithBlock() {
+    _isCollisionWithBlock() {
         let blocks = this.mapLayer.blocks.children;
         let rect = this.node.getBoundingBox();
 
@@ -57,7 +57,7 @@ export default class BaseTank extends cc.Component {
         return false;
     }
 
-    protected _isCollisionWithTank() {
+    _isCollisionWithTank() {
         let box = this.node.getBoundingBox();
         let enemies = this.mapLayer.enemies.children;
         let players = this.mapLayer.players.children;
@@ -76,7 +76,7 @@ export default class BaseTank extends cc.Component {
     }
 
     // 调整位置为8的整数倍
-    protected _adjustPosition() {
+    _adjustPosition() {
         this.node.x = adjustNumber(this.node.x);
         this.node.y = adjustNumber(this.node.y);
     }
