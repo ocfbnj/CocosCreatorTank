@@ -1,8 +1,10 @@
 {
   "title": "CocosTank",
   "packageName": "org.cocos2d.demo",
-  "startScene": "c2b2811f-ab9c-417b-bb98-bc203fb84c3f",
-  "excludeScenes": [],
+  "startScene": "33b91d94-d2e2-4117-94db-b200c8c2e451",
+  "excludeScenes": [
+    "c2b2811f-ab9c-417b-bb98-bc203fb84c3f"
+  ],
   "orientation": {
     "landscapeLeft": true,
     "landscapeRight": true,
@@ -27,7 +29,8 @@
   },
   "ios": {
     "REMOTE_SERVER_ROOT": "",
-    "packageName": "org.cocos2d.demo"
+    "packageName": "org.cocos2d.demo",
+    "ios_enable_jit": true
   },
   "mac": {
     "REMOTE_SERVER_ROOT": "",
@@ -49,5 +52,6 @@
     "scheme": "https",
     "skipRecord": false
   },
-  "appBundle": false
+  "appBundle": false,
+  "agreements": {}
 }

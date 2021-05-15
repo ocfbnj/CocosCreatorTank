@@ -11,7 +11,7 @@ export default class Game extends cc.Component {
     black: cc.Prefab = null;
     @property
     _level: number = 1;
-    
+
     _gameMode: GameMode = GameMode.ONE;
 
     @property({
@@ -68,11 +68,11 @@ export default class Game extends cc.Component {
                 let bigGameOVer = cc.find("/Canvas/External/big_gameover");
                 bigGameOVer.setPosition(0, 0);
 
-                // 2秒后回到主界面
-                cc.director.preloadScene("Menu");
-                this.scheduleOnce(() => {
-                    cc.director.loadScene("Menu");
-                }, 2);
+                // TODO 2秒后回到主界面
+                // cc.director.preloadScene("Menu");
+                // this.scheduleOnce(() => {
+                //     cc.director.loadScene("Menu");
+                // }, 2);
             })
             .start();
     }

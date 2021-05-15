@@ -482,7 +482,6 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_useOriginalSize": false,
     "_string": "1",
     "_N$string": "1",
     "_fontSize": 7,
@@ -978,7 +977,6 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_useOriginalSize": false,
     "_string": "2",
     "_N$string": "2",
     "_fontSize": 7,
@@ -1170,7 +1168,6 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_useOriginalSize": false,
     "_string": "1",
     "_N$string": "1",
     "_fontSize": 7,
@@ -3353,7 +3350,7 @@
     "gameStartAudio": {
       "__uuid__": "1461613b-f040-45ca-9e17-504cd34e4e03"
     },
-    "enableAudio": false,
+    "enableAudio": true,
     "_id": "b6CoEwZwBHXpTGb+3hMzQQ"
   },
   {
