@@ -1,6 +1,6 @@
 # CocosTank
 
-Cocos Creator版本：2.4.2
+Cocos Creator版本：2.4.5
 
 游戏预览：<https://tank.ocfbnj.cn>
 

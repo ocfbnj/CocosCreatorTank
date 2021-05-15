@@ -2,6 +2,7 @@ import User from "../User";
 
 const { ccclass } = cc._decorator;
 
+// TODO 添加菜单
 @ccclass
 export default class Menu extends cc.Component {
     user: User = null;
