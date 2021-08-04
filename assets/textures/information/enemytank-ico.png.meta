@@ -1,6 +1,7 @@
 {
-  "ver": "2.3.5",
+  "ver": "2.3.7",
   "uuid": "f14dfcd9-87ea-4a4a-9543-51155d31b12d",
+  "importer": "texture",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "point",
@@ -12,8 +13,9 @@
   "platformSettings": {},
   "subMetas": {
     "enemytank-ico": {
-      "ver": "1.0.4",
+      "ver": "1.0.6",
       "uuid": "922d5364-dd3a-4196-93d4-ea276dd1a64f",
+      "importer": "sprite-frame",
       "rawTextureUuid": "f14dfcd9-87ea-4a4a-9543-51155d31b12d",
       "trimType": "auto",
       "trimThreshold": 1,

@@ -1,6 +1,7 @@
 {
-  "ver": "1.1.2",
+  "ver": "1.1.3",
   "uuid": "4fdb67e4-a430-4dd7-b290-18affd687e14",
+  "importer": "folder",
   "isBundle": true,
   "bundleName": "maps",
   "priority": 1,
